@@ -27,3 +27,4 @@ release-v0.1.0/
 *.log
 .env
 .env.*
+/ios-ci/
