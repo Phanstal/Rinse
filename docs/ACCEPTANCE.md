@@ -165,9 +165,10 @@ open App.xcworkspace
 
 ## 发布记录
 
-- Release：[v0.1.0](https://github.com/Phanstal/Rinse/releases/tag/v0.1.0)
-- Release workflow：[run 40487416524](https://github.com/Phanstal/Rinse/actions/runs/40487416524)
+- Release：[v0.1.1](https://github.com/Phanstal/Rinse/releases/tag/v0.1.1)（v0.1.0 已由本版取代）
+- Release workflow：[run 40490994528](https://github.com/Phanstal/Rinse/actions/runs/40490994528)
 - 发布校验：三个文件 SHA-256 与 `SHA256SUMS.txt` 一致。
-- APK：在 API 33 模拟器上先卸载旧 debug 签名版本，再全新安装发布 APK，启动后生成 8 条示例数据；`aapt` 确认包名 `com.phanstal.rinse`、versionName `0.1.0`。
-- iOS IPA：解包确认包含 `Payload/App.app/App`、`Info.plist`、Bundle ID `com.phanstal.rinse`、arm64 架构；未签名，需重签。
-- iOS 模拟器 zip：解包确认包含 `App.app`，同时包含 x86_64 与 arm64 架构。
+- APK：在 API 33 模拟器上先卸载旧 debug 签名版本，再全新安装发布 APK，启动后生成 8 条示例数据；`aapt` 确认包名 `com.phanstal.rinse`、versionCode `2`、versionName `0.1.1`。
+- iOS IPA：解包确认包含 `Payload/App.app/App`、`Info.plist`、Bundle ID `com.phanstal.rinse`、版本 `0.1.1 (2)`、arm64 架构；未签名，需重签。
+- iOS 模拟器 zip：解包确认包含 `App.app`，同时包含 x86_64 与 arm64 架构；CI 已安装并在 iPhone 15 Pro 模拟器启动截图。
+- 本版修正：iOS 与 Web 上深色紧急水泡被 `color-mix` 冲淡；现在紧急水泡保持原型的深蓝层次。
