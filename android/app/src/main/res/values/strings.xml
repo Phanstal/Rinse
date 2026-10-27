@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Rinse</string>
+    <string name="title_activity_main">Rinse</string>
+    <string name="package_name">com.phanstal.rinse</string>
+    <string name="custom_url_scheme">com.phanstal.rinse</string>
+</resources>

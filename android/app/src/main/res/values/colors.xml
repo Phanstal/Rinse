@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="rinseSurface">#FCFCFA</color>
+    <color name="colorPrimary">#428FD0</color>
+    <color name="colorPrimaryDark">#FCFCFA</color>
+    <color name="colorAccent">#65A9DC</color>
+</resources>
