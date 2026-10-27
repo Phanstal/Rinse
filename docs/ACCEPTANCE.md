@@ -2,7 +2,7 @@
 
 ## 验收范围
 
-本清单覆盖 Android、iOS 和 Web 三个运行面。Android 已在本地 API 33 模拟器完成一轮验收；iOS 模拟器已在 GitHub Actions 的 macOS 14 runner 构建通过，但本地没有 macOS，因此真机安装与运行仍需在 iPhone 或 Mac 上补充验证。
+本清单覆盖 Android、iOS 和 Web 三个运行面。Android 已在本地 API 33 模拟器完成一轮验收；iOS 模拟器已在 GitHub Actions 的 macOS 14 runner 构建、安装并在 iPhone 15 Pro 模拟器启动通过，但本地没有 macOS，因此真机安装与运行仍需在 iPhone 或 Mac 上补充验证。
 
 验收目标不是只看「能打开」，而是同时确认：
 
@@ -143,16 +143,16 @@ open App.xcworkspace
 
 ## 自动化证据
 
-| 检查        | 命令                      | 结果                                                                           |
-| ----------- | ------------------------- | ------------------------------------------------------------------------------ |
-| 单元测试    | `npm test`                | 16 passed                                                                      |
-| 移动端 E2E  | `npm run test:e2e`        | 11 passed                                                                      |
-| 类型        | `npm run typecheck`       | passed                                                                         |
-| Lint        | `npm run lint`            | passed                                                                         |
-| 格式        | `npm run format:check`    | passed                                                                         |
-| Android APK | `./gradlew assembleDebug` | BUILD SUCCESSFUL                                                               |
-| iOS 模拟器  | GitHub Actions macOS      | passed（[CI run](https://github.com/Phanstal/Rinse/actions/runs/40485608835)） |
-| CI 全流程   | GitHub Actions            | Web / Android / iOS 全部 passed                                                |
+| 检查        | 命令                      | 结果                                                                                          |
+| ----------- | ------------------------- | --------------------------------------------------------------------------------------------- |
+| 单元测试    | `npm test`                | 16 passed                                                                                     |
+| 移动端 E2E  | `npm run test:e2e`        | 11 passed                                                                                     |
+| 类型        | `npm run typecheck`       | passed                                                                                        |
+| Lint        | `npm run lint`            | passed                                                                                        |
+| 格式        | `npm run format:check`    | passed                                                                                        |
+| Android APK | `./gradlew assembleDebug` | BUILD SUCCESSFUL                                                                              |
+| iOS 模拟器  | GitHub Actions macOS      | build + launch passed（[CI run](https://github.com/Phanstal/Rinse/actions/runs/40489937940)） |
+| CI 全流程   | GitHub Actions            | Web / Android / iOS 全部 passed                                                               |
 
 ## 发布产物验收
 
@@ -160,7 +160,7 @@ open App.xcworkspace
 - [x] `sha256sum -c SHA256SUMS.txt` 全部通过。
 - [x] APK 能在干净的 Android 设备/模拟器安装。
 - [ ] 未签名 IPA 能被重签工具识别（不要求直接安装）。
-- [ ] 模拟器 zip 能在 macOS Xcode Simulator 中启动。
+- [x] 模拟器 zip 能在 macOS Xcode Simulator 中启动。
 - [ ] 真机验收记录补充到本文件。
 
 ## 发布记录

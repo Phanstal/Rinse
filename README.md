@@ -56,6 +56,10 @@ Android 原生运行（CI 构建 APK，API 33 模拟器）：
 
 ![Android 原生首页](docs/screenshots/native-android-release.png)
 
+iOS 模拟器运行（GitHub Actions macOS，iPhone 15 Pro）：
+
+![iOS 模拟器首页](docs/screenshots/ios-simulator-home.png)
+
 ## 隐私
 
 - 不创建账号，不连接服务器，不发送分析或崩溃数据。
