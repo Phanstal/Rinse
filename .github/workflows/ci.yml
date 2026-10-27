@@ -157,9 +157,27 @@ jobs:
           APP_PATH="$RUNNER_TEMP/ios-sim/Build/Products/Debug-iphonesimulator/App.app"
           ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" "$RUNNER_TEMP/Rinse-ios-simulator.zip"
 
+      - name: Smoke test simulator app
+        run: |
+          set -euo pipefail
+          DEVICE_ID="$(xcrun simctl list devices available | grep -m1 'iPhone' | sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/')"
+          if [ -z "$DEVICE_ID" ]; then
+            echo "No iPhone simulator available" >&2
+            exit 1
+          fi
+          xcrun simctl boot "$DEVICE_ID" || true
+          xcrun simctl bootstatus "$DEVICE_ID" -b
+          APP_PATH="$RUNNER_TEMP/ios-sim/Build/Products/Debug-iphonesimulator/App.app"
+          xcrun simctl install "$DEVICE_ID" "$APP_PATH"
+          xcrun simctl launch "$DEVICE_ID" com.phanstal.rinse
+          sleep 6
+          xcrun simctl io "$DEVICE_ID" screenshot "$RUNNER_TEMP/Rinse-ios-home.png"
+
       - name: Upload simulator app
         uses: actions/upload-artifact@v4
         with:
           name: ios-artifacts
-          path: ${{ runner.temp }}/Rinse-ios-simulator.zip
+          path: |
+            ${{ runner.temp }}/Rinse-ios-simulator.zip
+            ${{ runner.temp }}/Rinse-ios-home.png
           retention-days: 14
