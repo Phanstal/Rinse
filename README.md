@@ -52,6 +52,10 @@
 ![新增周期](docs/screenshots/web-editor.png)
 ![清洁历史](docs/screenshots/web-history-filled.png)
 
+Android 原生运行（CI 构建 APK，API 33 模拟器）：
+
+![Android 原生首页](docs/screenshots/native-android-release.png)
+
 ## 隐私
 
 - 不创建账号，不连接服务器，不发送分析或崩溃数据。

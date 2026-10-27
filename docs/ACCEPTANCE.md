@@ -156,9 +156,18 @@ open App.xcworkspace
 
 ## 发布产物验收
 
-- [ ] GitHub Release 包含 APK、未签名 IPA、模拟器 zip、SHA256SUMS.txt。
-- [ ] `sha256sum -c SHA256SUMS.txt` 全部通过。
-- [ ] APK 能在干净的 Android 设备/模拟器安装。
+- [x] GitHub Release 包含 APK、未签名 IPA、模拟器 zip、SHA256SUMS.txt。
+- [x] `sha256sum -c SHA256SUMS.txt` 全部通过。
+- [x] APK 能在干净的 Android 设备/模拟器安装。
 - [ ] 未签名 IPA 能被重签工具识别（不要求直接安装）。
 - [ ] 模拟器 zip 能在 macOS Xcode Simulator 中启动。
 - [ ] 真机验收记录补充到本文件。
+
+## 发布记录
+
+- Release：[v0.1.0](https://github.com/Phanstal/Rinse/releases/tag/v0.1.0)
+- Release workflow：[run 40487416524](https://github.com/Phanstal/Rinse/actions/runs/40487416524)
+- 发布校验：三个文件 SHA-256 与 `SHA256SUMS.txt` 一致。
+- APK：在 API 33 模拟器上先卸载旧 debug 签名版本，再全新安装发布 APK，启动后生成 8 条示例数据；`aapt` 确认包名 `com.phanstal.rinse`、versionName `0.1.0`。
+- iOS IPA：解包确认包含 `Payload/App.app/App`、`Info.plist`、Bundle ID `com.phanstal.rinse`、arm64 架构；未签名，需重签。
+- iOS 模拟器 zip：解包确认包含 `App.app`，同时包含 x86_64 与 arm64 架构。
