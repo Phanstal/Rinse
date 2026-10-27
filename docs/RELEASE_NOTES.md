@@ -1,6 +1,11 @@
-# Rinse v0.1.0 发布说明
+# Rinse v0.1.1 发布说明
 
-首个公开版本，提供 Android 与 iOS 原生外壳，以及可在浏览器中运行的本地优先 Web 版本。
+公开版本更新，提供 Android 与 iOS 原生外壳，以及可在浏览器中运行的本地优先 Web 版本。
+
+## 本版修正
+
+- 修正 iOS 与 Web 上深色紧急水泡被 `color-mix` 冲淡的问题；紧急水泡恢复原型的深蓝层次，浅色水泡继续保留玻璃质感。
+- 同步更新版本号：Android versionCode 2 / versionName 0.1.1，iOS build 2 / version 0.1.1。
 
 ## 功能
 
@@ -15,9 +20,9 @@
 
 ## 下载文件
 
-- `Rinse-0.1.0-android-debug.apk` — Android debug 签名 APK，可直接侧载。
-- `Rinse-0.1.0-ios-unsigned.ipa` — iOS 未签名 IPA，需要自行用 Apple ID 重签。
-- `Rinse-0.1.0-ios-simulator.zip` — iOS 模拟器 App，需要 macOS + Xcode。
+- `Rinse-0.1.1-android-debug.apk` — Android debug 签名 APK，可直接侧载。
+- `Rinse-0.1.1-ios-unsigned.ipa` — iOS 未签名 IPA，需要自行用 Apple ID 重签。
+- `Rinse-0.1.1-ios-simulator.zip` — iOS 模拟器 App，需要 macOS + Xcode。
 - `SHA256SUMS.txt` — 校验和。
 
 ## 验证情况
@@ -42,5 +47,5 @@ sha256sum -c SHA256SUMS.txt
 或在 Windows PowerShell 中：
 
 ```powershell
-Get-FileHash .\Rinse-0.1.0-android-debug.apk -Algorithm SHA256
+Get-FileHash .\Rinse-0.1.1-android-debug.apk -Algorithm SHA256
 ```

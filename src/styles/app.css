@@ -205,7 +205,8 @@ h1 {
 }
 
 @supports (color: color-mix(in lab, red, red)) {
-  .bubble {
+  /* Keep the urgent bubble deep; only the quieter bubbles get the milky glass. */
+  .bubble-light {
     background: linear-gradient(
       145deg,
       color-mix(in srgb, var(--bubble-color) 70%, #ffffffb8),

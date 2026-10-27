@@ -1,7 +1,7 @@
 {
   "name": "rinse",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "A local-first cleaning cycle tracker for iOS and Android.",
   "scripts": {

@@ -18,7 +18,7 @@
 | Android  | Android 13 / API 33 x86_64 模拟器，1080 × 2400 | GitHub Actions Ubuntu + JDK 17 + Android SDK                         |
 | iOS      | 未在本地运行（Windows 无 Xcode）               | GitHub Actions macOS 14：模拟器构建通过；设备未签名包由 release 构建 |
 | Web      | Edge / Chromium，390 × 844 和 360 × 740        | GitHub Actions Chromium 移动端 E2E                                   |
-| 应用版本 | 0.1.0（versionCode 1 / build 1）               | 同左                                                                 |
+| 应用版本 | 0.1.1（versionCode 2 / build 2）               | 同左                                                                 |
 | 日期     | 2026-10-27                                     | 以 release workflow 实际运行日期为准                                 |
 
 ## Android 验收步骤
@@ -104,7 +104,7 @@
 
 ### I1 模拟器运行
 
-- 下载 `Rinse-0.1.0-ios-simulator.zip`，解压得到 `App.app`。
+- 下载 `Rinse-0.1.1-ios-simulator.zip`，解压得到 `App.app`。
 - 打开 Xcode Simulator，把 `App.app` 拖入模拟器；或从源码运行：
 
 ```bash
@@ -124,7 +124,7 @@ open App.xcworkspace
 - 在 Xcode 打开 `ios/App/App.xcworkspace`。
 - 选择 App target → Signing & Capabilities，选择自己的 Team，修改唯一 Bundle Identifier。
 - 连接 iPhone，选择设备 Run。
-- 或者用 Sideloadly / AltStore 重签 `Rinse-0.1.0-ios-unsigned.ipa`。
+- 或者用 Sideloadly / AltStore 重签 `Rinse-0.1.1-ios-unsigned.ipa`。
 - 检查启动图、状态栏、安全区、触感反馈与本地持久化。
 - 杀进程后重新打开，数据仍在。
 
