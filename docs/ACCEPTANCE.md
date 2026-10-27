@@ -2,7 +2,7 @@
 
 ## 验收范围
 
-本清单覆盖 Android、iOS 和 Web 三个运行面。Android 已在本地 API 33 模拟器完成一轮验收；iOS 受限于本地没有 macOS，需在 Mac/iPhone 或 GitHub Actions 的 macOS runner 上补充真机验证。
+本清单覆盖 Android、iOS 和 Web 三个运行面。Android 已在本地 API 33 模拟器完成一轮验收；iOS 模拟器已在 GitHub Actions 的 macOS 14 runner 构建通过，但本地没有 macOS，因此真机安装与运行仍需在 iPhone 或 Mac 上补充验证。
 
 验收目标不是只看「能打开」，而是同时确认：
 
@@ -13,13 +13,13 @@
 
 ## 验收环境
 
-| 项目     | 本地验收                                       | 发布验证                                            |
-| -------- | ---------------------------------------------- | --------------------------------------------------- |
-| Android  | Android 13 / API 33 x86_64 模拟器，1080 × 2400 | GitHub Actions Ubuntu + JDK 17 + Android SDK        |
-| iOS      | 未在本地运行（Windows 无 Xcode）               | GitHub Actions macOS 14，模拟器构建与未签名设备构建 |
-| Web      | Edge / Chromium，390 × 844 和 360 × 740        | GitHub Actions Chromium 移动端 E2E                  |
-| 应用版本 | 0.1.0（versionCode 1 / build 1）               | 同左                                                |
-| 日期     | 2026-10-27                                     | 以 release workflow 实际运行日期为准                |
+| 项目     | 本地验收                                       | 发布验证                                                             |
+| -------- | ---------------------------------------------- | -------------------------------------------------------------------- |
+| Android  | Android 13 / API 33 x86_64 模拟器，1080 × 2400 | GitHub Actions Ubuntu + JDK 17 + Android SDK                         |
+| iOS      | 未在本地运行（Windows 无 Xcode）               | GitHub Actions macOS 14：模拟器构建通过；设备未签名包由 release 构建 |
+| Web      | Edge / Chromium，390 × 844 和 360 × 740        | GitHub Actions Chromium 移动端 E2E                                   |
+| 应用版本 | 0.1.0（versionCode 1 / build 1）               | 同左                                                                 |
+| 日期     | 2026-10-27                                     | 以 release workflow 实际运行日期为准                                 |
 
 ## Android 验收步骤
 
@@ -143,15 +143,16 @@ open App.xcworkspace
 
 ## 自动化证据
 
-| 检查        | 命令                      | 结果             |
-| ----------- | ------------------------- | ---------------- |
-| 单元测试    | `npm test`                | 16 passed        |
-| 移动端 E2E  | `npm run test:e2e`        | 11 passed        |
-| 类型        | `npm run typecheck`       | passed           |
-| Lint        | `npm run lint`            | passed           |
-| 格式        | `npm run format:check`    | passed           |
-| Android APK | `./gradlew assembleDebug` | BUILD SUCCESSFUL |
-| iOS 模拟器  | GitHub Actions macOS      | 以 CI 日志为准   |
+| 检查        | 命令                      | 结果                                                                           |
+| ----------- | ------------------------- | ------------------------------------------------------------------------------ |
+| 单元测试    | `npm test`                | 16 passed                                                                      |
+| 移动端 E2E  | `npm run test:e2e`        | 11 passed                                                                      |
+| 类型        | `npm run typecheck`       | passed                                                                         |
+| Lint        | `npm run lint`            | passed                                                                         |
+| 格式        | `npm run format:check`    | passed                                                                         |
+| Android APK | `./gradlew assembleDebug` | BUILD SUCCESSFUL                                                               |
+| iOS 模拟器  | GitHub Actions macOS      | passed（[CI run](https://github.com/Phanstal/Rinse/actions/runs/40485608835)） |
+| CI 全流程   | GitHub Actions            | Web / Android / iOS 全部 passed                                                |
 
 ## 发布产物验收
 

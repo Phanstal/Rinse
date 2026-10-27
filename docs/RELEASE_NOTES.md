@@ -23,8 +23,8 @@
 ## 验证情况
 
 - Web：lint、格式、类型检查、16 项单元测试、11 项移动端 E2E 全部通过。
-- Android：API 33 x86_64 模拟器上完成安装、启动、详情、新增（含软键盘）、按住清洁、历史撤销、返回键、重启持久化验证。APK 为 debug 签名。
-- iOS：由 GitHub Actions macOS runner 构建；本地环境为 Windows，无法在本机完成模拟器或真机运行验证。真机安装需要用户自己的 Apple 签名。
+- Android：API 33 x86_64 模拟器上完成安装、启动、详情、新增（含软键盘）、按住清洁、历史撤销、返回键、重启持久化验证。APK 为 debug 签名，并已用 CI 产物复装验证。
+- iOS：GitHub Actions macOS 14 runner 上模拟器构建通过；设备目标由 release workflow 构建未签名 IPA。本地环境为 Windows，无法在本机完成模拟器或真机运行验证。真机安装需要用户自己的 Apple 签名。
 
 ## 已知限制
 
