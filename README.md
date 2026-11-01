@@ -67,7 +67,11 @@ Android 原生运行（本机 API 33 模拟器，1080 × 2400）：
 ![Android 原生清洁历史](docs/screenshots/native-android-history.png)
 ![Android 原生备份面板](docs/screenshots/native-android-backup.png)
 
-iOS 模拟器构建由 GitHub Actions macOS runner 验证，三端共用同一套 Web 资源，首页、网格、列表与面板布局一致；真机安装需要用户自己的 Apple 签名。
+iOS 模拟器运行（GitHub Actions macOS 15，iPhone 16 Pro 模拟器）：
+
+![iOS 模拟器首页](docs/screenshots/ios-simulator-home.png)
+
+三端共用同一套 Web 资源，首页、网格、列表与面板布局一致；真机安装需要用户自己的 Apple 签名。
 
 ## 隐私
 
@@ -152,7 +156,7 @@ open App.xcworkspace
 ## 测试
 
 - `tests/unit`：域名逻辑、日期边界、排序、编辑、清洁/撤销、Preferences 仓库序列化与容错。
-- `tests/e2e`：首页、列表、详情、新增、编辑、按住清洁、历史撤销、删除、刷新持久化、空状态、360 px 窄屏。
+- `tests/e2e`：首页、三视图切换、详情、新增、编辑、按住清洁、历史撤销、删除、刷新持久化、空状态、360 px 窄屏。
 - CI 同时验证 Web 检查、Android debug APK 构建、iOS 模拟器构建。
 
 ## 目录
@@ -176,7 +180,9 @@ docs/                 发布说明、验收清单、截图
 
 ## 设计来源
 
-界面依据提供的 Figma 原型复刻，保持了水泡布局、配色、文案层级、详情/编辑/历史面板与交互节奏。日期计算改为使用设备本地日历日，避免原型中 UTC 日期在跨时区时出现偏移。
+界面依据 [Figma Make 原型（Version 26）](https://www.figma.com/make/zpog9lRPWVomLBPYMTKvOp/Rinse-Cleaning-Cycle-Tracker) 复刻，保持了玻璃卡片、水泡布局、三视图切换、配色、文案层级、详情/编辑/历史面板与交互节奏。日期计算使用设备本地日历日，避免跨时区时出现偏移。
+
+更多文档：[改版报告](REPORT.md) · [真机验收清单](docs/ACCEPTANCE.md) · [发布说明](docs/RELEASE_NOTES.md)
 
 ## License
 

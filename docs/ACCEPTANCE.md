@@ -132,7 +132,7 @@ pod install
 open App.xcworkspace
 ```
 
-- 选择任意 iPhone 模拟器 Run。
+- 选择任意 iPhone 模拟器 Run。CI 已在 iPhone 16 Pro 模拟器完成安装、启动与截图，截图见 README。
 - 检查：安全区顶部不压状态栏；底部 FAB 不压 Home Indicator；详情/编辑面板可滚动；键盘弹出时编辑表单仍可完成保存。
 - 检查历史、撤销、长按、三视图切换与 Android 一致。
 
@@ -162,16 +162,16 @@ open App.xcworkspace
 
 ## 自动化证据
 
-| 检查        | 命令                      | 结果                                                                      |
-| ----------- | ------------------------- | ------------------------------------------------------------------------- |
-| 单元测试    | `npm test`                | 22 passed                                                                 |
-| 移动端 E2E  | `npm run test:e2e`        | 14 passed                                                                 |
-| 类型        | `npm run typecheck`       | passed                                                                    |
-| Lint        | `npm run lint`            | passed                                                                    |
-| 格式        | `npm run format:check`    | passed                                                                    |
-| Android APK | `./gradlew assembleDebug` | BUILD SUCCESSFUL                                                          |
-| iOS 模拟器  | GitHub Actions macOS      | v0.1.3 release workflow 构建通过（链接见发布记录）                        |
-| CI 全流程   | GitHub Actions            | lint / 格式 / 类型 / 单元 / E2E / APK / iOS 全部 passed（链接见发布记录） |
+| 检查        | 命令                      | 结果                                                                                                                            |
+| ----------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| 单元测试    | `npm test`                | 22 passed                                                                                                                       |
+| 移动端 E2E  | `npm run test:e2e`        | 14 passed                                                                                                                       |
+| 类型        | `npm run typecheck`       | passed                                                                                                                          |
+| Lint        | `npm run lint`            | passed                                                                                                                          |
+| 格式        | `npm run format:check`    | passed                                                                                                                          |
+| Android APK | `./gradlew assembleDebug` | BUILD SUCCESSFUL                                                                                                                |
+| iOS 模拟器  | GitHub Actions macOS 15   | 构建、安装、启动与截图 passed（[CI run](https://github.com/Phanstal/Rinse/actions/runs/41327984411)）                           |
+| CI 全流程   | GitHub Actions            | lint / 格式 / 类型 / 单元 / E2E / APK / iOS 全部 passed（[CI run](https://github.com/Phanstal/Rinse/actions/runs/41327984411)） |
 
 ## 发布产物验收
 
