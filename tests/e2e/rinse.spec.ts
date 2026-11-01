@@ -23,12 +23,26 @@ test('shows the seeded home with bubbles, summary and controls', async ({ page }
   await expect(page.getByRole('button', { name: 'Cleaning history' })).toBeVisible();
 });
 
-test('switches between the bubble field and the full list', async ({ page }) => {
+test('switches between the bubble, grid and full list views', async ({ page }) => {
   await openHome(page);
   await openList(page);
   await expect(page.locator('.home-list .history-item-button')).toHaveCount(8);
-  await expect(page.getByText('2 days overdue · Every 3 days')).toBeVisible();
-  await expect(page.getByText('Due in 29 days · Every 30 days')).toBeVisible();
+  const kitchenRow = page.locator('.home-list .history-item-button').filter({
+    hasText: 'Kitchen counter',
+  });
+  await expect(kitchenRow.getByText('Every 3 days')).toBeVisible();
+  await expect(kitchenRow.locator('.list-days')).toHaveText('2d overdue');
+  await expect(
+    page
+      .locator('.home-list .history-item-button')
+      .filter({ hasText: 'Fridge' })
+      .locator('.list-days'),
+  ).toHaveText('29 days left');
+
+  await page.getByRole('tab', { name: 'Grid view' }).click();
+  await expect(page.locator('.ordered-grid .grid-item')).toHaveCount(8);
+  await expect(page.locator('.grid-item').first()).toContainText('Kitchen counter');
+
   await page.getByRole('tab', { name: 'Bubble view' }).click();
   await expect(page.locator('.bubble')).toHaveCount(8);
 });
@@ -211,10 +225,14 @@ test('refreshes relative dates after the local midnight', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByText('3 areas ready for care')).toBeVisible();
   await page.getByRole('tab', { name: 'List view' }).click();
-  await expect(page.getByText('2 days overdue · Every 3 days')).toBeVisible();
+  const kitchenDays = page
+    .locator('.home-list .history-item-button')
+    .filter({ hasText: 'Kitchen counter' })
+    .locator('.list-days');
+  await expect(kitchenDays).toHaveText('2d overdue');
 
   await page.clock.fastForward(35_000);
-  await expect(page.getByText('3 days overdue · Every 3 days')).toBeVisible();
+  await expect(kitchenDays).toHaveText('3d overdue');
 });
 
 test('fits a 360 × 740 Android viewport without horizontal scrolling', async ({ page }) => {

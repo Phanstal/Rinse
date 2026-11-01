@@ -2,7 +2,7 @@
 
 ## 验收范围
 
-本清单覆盖 Android、iOS 和 Web 三个运行面。Android 已在本地 API 33 模拟器完成一轮验收；iOS 模拟器已在 GitHub Actions 的 macOS 14 runner 构建、安装并在 iPhone 15 Pro 模拟器启动通过，但本地没有 macOS，因此真机安装与运行仍需在 iPhone 或 Mac 上补充验证。
+本清单覆盖 Android、iOS 和 Web 三个运行面。v0.1.3 已在本地 API 33 模拟器完成一轮验收；iOS 模拟器由 GitHub Actions 的 macOS 14 runner 构建，本地没有 macOS，因此 iOS 启动与真机安装仍需在 Mac 上补充验证。
 
 验收目标不是只看「能打开」，而是同时确认：
 
@@ -18,8 +18,8 @@
 | Android  | Android 13 / API 33 x86_64 模拟器，1080 × 2400 | GitHub Actions Ubuntu + JDK 17 + Android SDK                         |
 | iOS      | 未在本地运行（Windows 无 Xcode）               | GitHub Actions macOS 14：模拟器构建通过；设备未签名包由 release 构建 |
 | Web      | Edge / Chromium，390 × 844 和 360 × 740        | GitHub Actions Chromium 移动端 E2E                                   |
-| 应用版本 | 0.1.2（versionCode 3 / build 3）               | 同左                                                                 |
-| 日期     | 2026-10-27                                     | 以 release workflow 实际运行日期为准                                 |
+| 应用版本 | 0.1.3（versionCode 4 / build 4）               | 同左                                                                 |
+| 日期     | 2026-11-02                                     | 以 release workflow 实际运行日期为准                                 |
 
 ## Android 验收步骤
 
@@ -29,14 +29,15 @@
 
 - 清除应用数据后启动，应出现浅色启动画面与 Rinse 水泡图标。
 - 首页标题为「Your home, at a glance.」，摘要为「3 areas ready for care」。
+- 标题下方是一张半透明圆角玻璃卡片；卡片内部是水泡区域、触控提示和 Bubbles / Grid / List 分段切换。
 - 8 个水泡全部可见：Kitchen counter、Bathroom、Floors、Bedsheets、Shower、Mirrors、Towels、Fridge。
-- 第一个水泡为深蓝色，显示「2d overdue」；其余水泡按紧急度依次变浅。
-- 底部有「Press and hold a bubble when it's clean」、水泡/列表切换和 `+` 按钮。
+- Kitchen counter 水泡位于视觉中心、尺寸最大且为深蓝色，显示「2d overdue」；其余水泡按紧急度向外错落分布并依次变浅。
+- 卡片下方有渐变圆形 `+` 按钮；页面底部不压系统手势条。
 
 ### A2 详情面板
 
 - 轻点 Kitchen counter 水泡，底部面板滑入。
-- 面板显示 CLEANING ITEM、Kitchen counter、Overdue、Next cycle「2 days overdue」、Last cleaned「Oct 22」、Repeats「Every 3 days」。
+- 面板显示 CLEANING ITEM、Kitchen counter、Overdue、Next cycle「2 days overdue」、Last cleaned（当天往前 5 天）、Repeats「Every 3 days」。
 - Mark as cleaned、Edit、Delete 三个按钮均可见。
 - 点右上角关闭，面板退出，首页状态不变。
 
@@ -45,7 +46,7 @@
 - 点 `+`，面板标题为「What would you like to care for?」。
 - 点 Item name，软键盘弹出；输入「Native touch」。
 - 点「7 days」预设，间隔输入框变为 7。
-- 隐藏键盘后点 Save item，出现「Item added」提示；水泡或列表中能看到新项目。
+- 隐藏键盘后点 Save item，出现「Item added」提示；水泡、网格或列表中能看到新项目。
 - 编辑面板打开时按 Android 返回键，应先关闭面板而不是退出应用。
 
 ### A4 编辑周期
@@ -92,11 +93,12 @@
 - 删除全部项目后显示「Start with one small thing.」与 Add your first item。
 - 点 Add your first item 可以新增第一个项目。
 
-### A10 列表与窄屏
+### A10 三视图与窄屏
 
-- 点底部列表图标，所有项目按紧急度排列，显示状态、周期。
-- 切回水泡视图，水泡仍可见。
-- 在 360 × 740 视口下无横向滚动，`+` 按钮不被裁切。
+- 点底部 Grid，切换为两列圆角网格；前两个项目为深色底，顺序与紧急度一致。
+- 点 List，切换为完整列表；8 行全部可见，最后一行的文字位于触控提示上方，不被提示或分段切换遮住。
+- 点 Bubbles 切回水泡视图，水泡仍可见，选中态与排序不变。
+- 在 360 × 740 视口下无横向滚动，`+` 按钮不被裁切，列表可滚动查看剩余项目。
 - 应用锁定竖屏；旋转设备不应变成横屏。
 
 ### A11 备份与恢复
@@ -119,7 +121,7 @@
 
 ### I1 模拟器运行
 
-- 下载 `Rinse-0.1.2-ios-simulator.zip`，解压得到 `App.app`。
+- 下载 `Rinse-0.1.3-ios-simulator.zip`，解压得到 `App.app`。
 - 打开 Xcode Simulator，把 `App.app` 拖入模拟器；或从源码运行：
 
 ```bash
@@ -132,14 +134,14 @@ open App.xcworkspace
 
 - 选择任意 iPhone 模拟器 Run。
 - 检查：安全区顶部不压状态栏；底部 FAB 不压 Home Indicator；详情/编辑面板可滚动；键盘弹出时编辑表单仍可完成保存。
-- 检查历史、撤销、长按、列表切换与 Android 一致。
+- 检查历史、撤销、长按、三视图切换与 Android 一致。
 
 ### I2 真机安装（需要签名）
 
 - 在 Xcode 打开 `ios/App/App.xcworkspace`。
 - 选择 App target → Signing & Capabilities，选择自己的 Team，修改唯一 Bundle Identifier。
 - 连接 iPhone，选择设备 Run。
-- 或者用 Sideloadly / AltStore 重签 `Rinse-0.1.2-ios-unsigned.ipa`。
+- 或者用 Sideloadly / AltStore 重签 `Rinse-0.1.3-ios-unsigned.ipa`。
 - 检查启动图、状态栏、安全区、触感反馈与本地持久化。
 - 杀进程后重新打开，数据仍在。
 
@@ -156,20 +158,20 @@ open App.xcworkspace
 - 浏览器刷新后数据仍在 localStorage。
 - 清除站点数据后回到示例数据。
 - 历史页右上角打开备份面板，复制/下载 JSON；再粘贴恢复，刷新后恢复的数据仍在。
-- 在本地午夜前后停留，列表中的到期天数会自动跨日更新。
+- 在本地午夜前后停留，三视图中的到期天数与排序会自动跨日更新。
 
 ## 自动化证据
 
-| 检查        | 命令                      | 结果                                                                                                    |
-| ----------- | ------------------------- | ------------------------------------------------------------------------------------------------------- |
-| 单元测试    | `npm test`                | 22 passed                                                                                               |
-| 移动端 E2E  | `npm run test:e2e`        | 14 passed                                                                                               |
-| 类型        | `npm run typecheck`       | passed                                                                                                  |
-| Lint        | `npm run lint`            | passed                                                                                                  |
-| 格式        | `npm run format:check`    | passed                                                                                                  |
-| Android APK | `./gradlew assembleDebug` | BUILD SUCCESSFUL                                                                                        |
-| iOS 模拟器  | GitHub Actions macOS      | build + launch passed（[CI run](https://github.com/Phanstal/Rinse/actions/runs/41301713612)）           |
-| CI 全流程   | GitHub Actions            | Web / Android / iOS 全部 passed（[CI run](https://github.com/Phanstal/Rinse/actions/runs/41301713612)） |
+| 检查        | 命令                      | 结果                                                                      |
+| ----------- | ------------------------- | ------------------------------------------------------------------------- |
+| 单元测试    | `npm test`                | 22 passed                                                                 |
+| 移动端 E2E  | `npm run test:e2e`        | 14 passed                                                                 |
+| 类型        | `npm run typecheck`       | passed                                                                    |
+| Lint        | `npm run lint`            | passed                                                                    |
+| 格式        | `npm run format:check`    | passed                                                                    |
+| Android APK | `./gradlew assembleDebug` | BUILD SUCCESSFUL                                                          |
+| iOS 模拟器  | GitHub Actions macOS      | v0.1.3 release workflow 构建通过（链接见发布记录）                        |
+| CI 全流程   | GitHub Actions            | lint / 格式 / 类型 / 单元 / E2E / APK / iOS 全部 passed（链接见发布记录） |
 
 ## 发布产物验收
 

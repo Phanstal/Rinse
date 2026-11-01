@@ -14,9 +14,9 @@
 
 | 平台       | 文件                            | 说明                                           |
 | ---------- | ------------------------------- | ---------------------------------------------- |
-| Android    | `Rinse-0.1.2-android-debug.apk` | 可直接安装的 debug 签名 APK                    |
-| iOS        | `Rinse-0.1.2-ios-unsigned.ipa`  | 未签名 IPA，需要使用自己的 Apple ID 重签后安装 |
-| iOS 模拟器 | `Rinse-0.1.2-ios-simulator.zip` | 需要 macOS + Xcode，解压后拖入模拟器           |
+| Android    | `Rinse-0.1.3-android-debug.apk` | 可直接安装的 debug 签名 APK                    |
+| iOS        | `Rinse-0.1.3-ios-unsigned.ipa`  | 未签名 IPA，需要使用自己的 Apple ID 重签后安装 |
+| iOS 模拟器 | `Rinse-0.1.3-ios-simulator.zip` | 需要 macOS + Xcode，解压后拖入模拟器           |
 | 校验       | `SHA256SUMS.txt`                | 所有发布文件的 SHA-256                         |
 
 ### Android 安装
@@ -39,31 +39,35 @@
 
 ## 功能
 
-- **水泡视图**：当前需要照顾的 8 个空间以水泡展示；最急的水泡更大、更深，按紧急程度自动排序。
-- **按住清洁**：按住水泡约 0.65 秒即可完成一次清洁，伴随轻微触感与气泡音效反馈。
-- **点按查看**：轻点水泡打开详情，可查看下次周期、上次清洁时间与重复频率。
+- **玻璃首页卡片**：按 Figma Make `Version 26` 重做首页，柔和渐变背景配半透明圆角卡片，底部是悬浮的水泡 / 网格 / 列表三视图切换。
+- **水泡视图**：8 个空间以高低错落的水泡展示；最急的水泡位于中心并更大、更深，其余水泡按紧急度向外扩散。
+- **网格视图**：同样按紧急度排序的圆角方块，两列可滚动；前两个最急项目使用深色底，扫一眼就知道先做哪里。
+- **列表视图**：完整的可滚动清单，显示周期、状态与剩余天数；三视图共享同一份排序与状态颜色。
+- **按住清洁**：按住水泡或网格约 0.65 秒即可完成一次清洁，伴随轻微触感、气泡音效和回弹动画。
+- **点按查看**：轻点水泡或网格打开详情，可查看下次周期、上次清洁时间与重复频率。
 - **新增 / 编辑**：支持名称、1–365 天周期、上次清洁日期；新增时默认从今天开始。
 - **历史与撤销**：每次清洁都会写入本地日志，可一键撤销，恢复上一次清洁日期。
-- **列表视图**：除水泡视图外，提供完整的可滚动列表，适合周期较多的场景。
 - **本地持久化**：Android 使用 SharedPreferences，iOS 使用 UserDefaults，Web 使用 localStorage；刷新或重启应用后数据仍在。
 - **备份与恢复**：在清洁历史右上角打开备份面板，可复制或下载 JSON 备份，也可粘贴备份替换本机数据。
 - **原生手感**：Android 返回键会按「编辑面板 → 备份面板 → 详情 → 历史 → 退出」的顺序逐层返回；适配系统安全区、状态栏与底部手势条。
-- **日期自动刷新**：跨过本地午夜或应用回到前台时，剩余天数与紧急状态会立即重新计算。
+- **日期自动刷新**：跨过本地午夜或应用回到前台时，剩余天数、紧急状态和排序会立即重新计算。
 
+![网格视图](docs/screenshots/web-grid.png)
+![列表视图](docs/screenshots/web-list.png)
 ![详情面板](docs/screenshots/web-detail.png)
 ![新增周期](docs/screenshots/web-editor.png)
 ![清洁历史](docs/screenshots/web-history-filled.png)
 ![备份与恢复](docs/screenshots/web-backup.png)
 
-Android 原生运行（CI 构建 APK，API 33 模拟器）：
+Android 原生运行（本机 API 33 模拟器，1080 × 2400）：
 
 ![Android 原生首页](docs/screenshots/native-android-release.png)
+![Android 原生网格视图](docs/screenshots/native-android-grid.png)
+![Android 原生列表视图](docs/screenshots/native-android-list.png)
 ![Android 原生清洁历史](docs/screenshots/native-android-history.png)
 ![Android 原生备份面板](docs/screenshots/native-android-backup.png)
 
-iOS 模拟器运行（GitHub Actions macOS，iPhone 15 Pro）：
-
-![iOS 模拟器首页](docs/screenshots/ios-simulator-home.png)
+iOS 模拟器构建由 GitHub Actions macOS runner 验证，三端共用同一套 Web 资源，首页、网格、列表与面板布局一致；真机安装需要用户自己的 Apple 签名。
 
 ## 隐私
 

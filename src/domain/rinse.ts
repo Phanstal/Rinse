@@ -26,16 +26,19 @@ export interface ScatterSlot {
   y: number;
 }
 
+// Organic "bubble galaxy" slots from the current Figma Make prototype:
+// the most urgent item sits centre, the next four orbit it, and the
+// freshest items settle toward the edges.
 export const SCATTER_SLOTS: ScatterSlot[] = [
   { x: 50, y: 50 },
-  { x: 84, y: 50 },
-  { x: 84, y: 17 },
-  { x: 50, y: 17 },
-  { x: 16, y: 17 },
-  { x: 16, y: 50 },
-  { x: 16, y: 83 },
-  { x: 50, y: 83 },
-  { x: 84, y: 83 },
+  { x: 79, y: 39 },
+  { x: 25, y: 34 },
+  { x: 69, y: 15 },
+  { x: 17, y: 63 },
+  { x: 47, y: 81 },
+  { x: 82, y: 73 },
+  { x: 17, y: 14 },
+  { x: 88, y: 14 },
 ];
 
 export function toDateKey(date: Date = new Date()): string {

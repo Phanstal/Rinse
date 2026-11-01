@@ -870,7 +870,7 @@ h1 {
 
 .toast {
   position: fixed;
-  bottom: max(122px, calc(env(safe-area-inset-bottom) + 108px));
+  bottom: max(170px, calc(env(safe-area-inset-bottom) + 160px));
   left: 50%;
   z-index: 40;
   padding: 11px 17px;
@@ -1321,6 +1321,13 @@ body[data-native='true'] .sheet-layer {
   backdrop-filter: none;
 }
 
+/* Chrome 109 paints a stale translucent copy of the page through an
+   animated sheet. Keep the sheet static and opaque on device. */
+body[data-native='true'] .sheet {
+  background: #fcfcfa;
+  animation: none;
+}
+
 /* Keep the transient toast clear of the bottom controls on the home view. */
 .app-shell:has(.toast) .mode-banner {
   opacity: 0;
@@ -1333,6 +1340,342 @@ body[data-native='true'] .app-shell {
   min-height: 100dvh;
   border-radius: 0;
   box-shadow: none;
+}
+
+/* -------------------------------------------------------------------------
+   Figma Make v26 home: a soft glass card with an organic bubble galaxy,
+   rounded-square grid and pill list. All three views share one bottom switch.
+   ------------------------------------------------------------------------- */
+.app-shell {
+  background:
+    radial-gradient(circle at 50% 105%, #428fd038, transparent 34%),
+    linear-gradient(180deg, #fcfcfa 0%, #f4fafd 55%, #edf7fc 100%);
+}
+
+.header {
+  padding-top: max(28px, calc(env(safe-area-inset-top) + 8px));
+}
+
+.wordmark {
+  margin-bottom: 17px;
+}
+
+h1 {
+  color: #2d3748;
+  font-size: 28px;
+  font-weight: 650;
+}
+
+.summary {
+  color: #718096;
+}
+
+.subtle-button {
+  margin-top: 25px;
+  color: #365f7e;
+  background: #ffffff6b;
+  box-shadow: inset 0 0 0 1px #ffffffbf;
+}
+
+.home-card {
+  position: absolute;
+  z-index: 2;
+  top: 150px;
+  right: 16px;
+  bottom: max(86px, calc(env(safe-area-inset-bottom) + 68px));
+  left: 16px;
+  overflow: hidden;
+  background: #ffffff6b;
+  border: 1px solid #ffffffd1;
+  border-radius: 32px;
+  box-shadow:
+    inset 0 2px 2px #fffc,
+    0 22px 48px #4a72a61f;
+  -webkit-backdrop-filter: blur(24px) saturate(112%);
+  backdrop-filter: blur(24px) saturate(112%);
+}
+
+.card-view-switch {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+  width: 208px;
+  padding: 4px;
+  background: #ddf1f6ad;
+  border: 1px solid #ffffffbd;
+  border-radius: 14px;
+  transform: translateX(-50%);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+.card-view-switch button {
+  display: grid;
+  place-items: center;
+  min-height: 34px;
+  padding: 0 10px;
+  color: #6f8491;
+  background: transparent;
+  border: 0;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.card-view-switch button:active {
+  transform: scale(0.96);
+}
+
+.card-view-switch button.active {
+  color: #245a7c;
+  background: #fcfcfae8;
+  box-shadow: 0 3px 10px #4a72a61a;
+}
+
+.home-card .bubble-field {
+  position: absolute;
+  inset: 14px 0 98px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  width: auto;
+  padding: 0 5px;
+}
+
+.home-card .bubble-grid {
+  min-height: 0;
+}
+
+.home-card .bubble {
+  width: clamp(62px, 18vw, 78px);
+  height: clamp(62px, 18vw, 78px);
+  padding: 8px;
+  font-size: 10px;
+}
+
+.home-card .bubble-position-0 {
+  z-index: 2;
+  width: clamp(132px, 36vw, 146px);
+  height: clamp(132px, 36vw, 146px);
+  padding: 18px;
+  font-size: 14px;
+  box-shadow:
+    inset 5px 7px 12px #ffffff24,
+    0 20px 42px #225f9640;
+}
+
+.home-card .bubble-position-1,
+.home-card .bubble-position-2,
+.home-card .bubble-position-3 {
+  width: clamp(78px, 21vw, 90px);
+  height: clamp(78px, 21vw, 90px);
+  font-size: 11px;
+}
+
+.home-card .hold-hint {
+  position: absolute;
+  right: 0;
+  bottom: 62px;
+  left: 0;
+  z-index: 5;
+  width: 100%;
+}
+
+.ordered-grid {
+  position: absolute;
+  inset: 16px 24px 98px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-content: center;
+  justify-items: center;
+  gap: 16px 12px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  animation: view-in 0.3s ease both;
+}
+
+.ordered-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.grid-item {
+  display: flex;
+  width: clamp(88px, 25vw, 108px);
+  height: clamp(88px, 25vw, 108px);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px;
+  color: #2d3748;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.28)), var(--bubble-color);
+  border: 0;
+  border-radius: 24px;
+  box-shadow: 0 12px 28px #4a72a61c;
+  font-size: 12px;
+  cursor: pointer;
+  transition:
+    transform 0.22s ease,
+    opacity 0.3s ease,
+    filter 0.3s ease;
+}
+
+.grid-item.grid-dark {
+  color: #fcfcfa;
+}
+
+.grid-item strong {
+  max-width: 82px;
+  font-weight: 650;
+  line-height: 1.15;
+}
+
+.grid-item small {
+  font-size: 10px;
+  opacity: 0.72;
+}
+
+.grid-item:active {
+  transform: scale(0.94);
+}
+
+.grid-item.is-popping {
+  animation: grid-pop 0.28s cubic-bezier(0.2, 0.9, 0.25, 1.3) both;
+}
+
+.grid-item.is-cleaning {
+  opacity: 0.4;
+  filter: brightness(1.25);
+  transform: scale(0.88);
+}
+
+.home-card .home-list {
+  position: absolute;
+  inset: 18px 13px 92px;
+  z-index: 2;
+  padding: 6px 3px 8px;
+  overflow-y: auto;
+  animation: view-in 0.3s ease both;
+}
+
+.home-card .history-list {
+  gap: 6px;
+}
+
+.home-card .history-row {
+  min-height: 56px;
+  padding: 8px 10px;
+  background: #ffffff94;
+  border: 0;
+  border-radius: 999px;
+  box-shadow: 0 8px 20px #4a72a612;
+}
+
+.home-card .history-cycle-dot {
+  width: 34px;
+  height: 34px;
+}
+
+.home-card .history-copy strong {
+  color: #3a474d;
+}
+
+.list-days {
+  flex: 0 0 auto;
+  max-width: 82px;
+  color: #428fd0;
+  font-size: 11px;
+  font-weight: 650;
+  text-align: right;
+}
+
+.add-button {
+  bottom: max(18px, env(safe-area-inset-bottom));
+  width: 52px;
+  height: 52px;
+  color: #fcfcfa;
+  background: linear-gradient(145deg, #428fd0, #225f96);
+  box-shadow: 0 14px 30px #225f9642;
+}
+
+.add-button svg {
+  width: 21px;
+  height: 21px;
+}
+
+@keyframes view-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (max-height: 700px) {
+  .home-card .bubble {
+    width: 64px;
+    height: 64px;
+    font-size: 9px;
+  }
+
+  .home-card .bubble-position-0 {
+    width: 112px;
+    height: 112px;
+    font-size: 13px;
+  }
+
+  .home-card .bubble-position-1,
+  .home-card .bubble-position-2,
+  .home-card .bubble-position-3 {
+    width: 66px;
+    height: 66px;
+    font-size: 10px;
+  }
+
+  .home-card .hold-hint {
+    font-size: 10px;
+  }
+
+  .home-card .bubble small {
+    margin-top: 3px;
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 370px) {
+  .home-card {
+    top: 146px;
+  }
+
+  .home-card .bubble {
+    width: clamp(58px, 17vw, 70px);
+    height: clamp(58px, 17vw, 70px);
+  }
+
+  .home-card .bubble-position-0 {
+    width: clamp(112px, 32vw, 126px);
+    height: clamp(112px, 32vw, 126px);
+    font-size: 13px;
+  }
+
+  .home-card .bubble-position-1,
+  .home-card .bubble-position-2,
+  .home-card .bubble-position-3 {
+    width: clamp(68px, 19vw, 80px);
+    height: clamp(68px, 19vw, 80px);
+  }
+
+  .grid-item {
+    width: clamp(88px, 27vw, 102px);
+    height: clamp(88px, 27vw, 102px);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,13 +1,7 @@
-import {
-  useEffect,
-  useRef,
-  useState,
-  type CSSProperties,
-  type PointerEvent as ReactPointerEvent,
-} from 'react';
+import type { CSSProperties } from 'react';
 import type { CleaningItem } from '../../domain/types';
 import { cycleColor, remainingCopy, scatterPosition, statusFor } from '../../domain/rinse';
-import { bubbleHaptic, playBubblePop } from '../../platform/feedback';
+import { useCleanPress } from './useCleanPress';
 
 type BubbleStyle = CSSProperties & {
   '--bubble-color': string;
@@ -24,63 +18,13 @@ interface BubbleFieldProps {
 }
 
 export function BubbleField({ items, now, onOpen, onClean }: BubbleFieldProps) {
-  const [pressingId, setPressingId] = useState<string | null>(null);
-  const [poppingId, setPoppingId] = useState<string | null>(null);
-  const pressTimer = useRef<number | null>(null);
-  const popTimer = useRef<number | null>(null);
-  const suppressClick = useRef<string | null>(null);
-
-  const clearPressTimer = () => {
-    if (pressTimer.current !== null) window.clearTimeout(pressTimer.current);
-    pressTimer.current = null;
-  };
-
-  useEffect(
-    () => () => {
-      clearPressTimer();
-      if (popTimer.current !== null) window.clearTimeout(popTimer.current);
-    },
-    [],
+  const { pressingId, poppingId, startClean, endPress, handleClick } = useCleanPress(
+    onOpen,
+    onClean,
   );
 
-  function startClean(item: CleaningItem, event: ReactPointerEvent<HTMLButtonElement>) {
-    if (event.pointerType === 'mouse' && event.button !== 0) return;
-    event.currentTarget.setPointerCapture?.(event.pointerId);
-    clearPressTimer();
-    setPressingId(item.id);
-    pressTimer.current = window.setTimeout(() => {
-      suppressClick.current = item.id;
-      playBubblePop();
-      void bubbleHaptic();
-      onClean(item.id);
-      setPressingId(null);
-      pressTimer.current = null;
-    }, 650);
-  }
-
-  function endPress() {
-    clearPressTimer();
-    setPressingId(null);
-  }
-
-  function handleClick(item: CleaningItem) {
-    if (suppressClick.current === item.id) {
-      suppressClick.current = null;
-      return;
-    }
-    playBubblePop();
-    void bubbleHaptic();
-    setPoppingId(item.id);
-    if (popTimer.current !== null) window.clearTimeout(popTimer.current);
-    popTimer.current = window.setTimeout(() => {
-      setPoppingId(null);
-      popTimer.current = null;
-      onOpen(item.id);
-    }, 190);
-  }
-
   return (
-    <section className="bubble-field" aria-label="Cleaning cycles">
+    <div className="bubble-field" aria-label="Cleaning cycles">
       <div className="bubble-grid">
         {items.map((item, index) => {
           const position = scatterPosition(index);
@@ -120,7 +64,6 @@ export function BubbleField({ items, now, onOpen, onClean }: BubbleFieldProps) {
           );
         })}
       </div>
-      <p className="hold-hint">Press and hold a bubble when it’s clean</p>
-    </section>
+    </div>
   );
 }
