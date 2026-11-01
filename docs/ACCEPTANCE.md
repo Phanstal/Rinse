@@ -160,16 +160,16 @@ open App.xcworkspace
 
 ## 自动化证据
 
-| 检查        | 命令                      | 结果                                                                                          |
-| ----------- | ------------------------- | --------------------------------------------------------------------------------------------- |
-| 单元测试    | `npm test`                | 22 passed                                                                                     |
-| 移动端 E2E  | `npm run test:e2e`        | 14 passed                                                                                     |
-| 类型        | `npm run typecheck`       | passed                                                                                        |
-| Lint        | `npm run lint`            | passed                                                                                        |
-| 格式        | `npm run format:check`    | passed                                                                                        |
-| Android APK | `./gradlew assembleDebug` | BUILD SUCCESSFUL                                                                              |
-| iOS 模拟器  | GitHub Actions macOS      | build + launch passed（[CI run](https://github.com/Phanstal/Rinse/actions/runs/40489937940)） |
-| CI 全流程   | GitHub Actions            | Web / Android / iOS 全部 passed                                                               |
+| 检查        | 命令                      | 结果                                                                                                    |
+| ----------- | ------------------------- | ------------------------------------------------------------------------------------------------------- |
+| 单元测试    | `npm test`                | 22 passed                                                                                               |
+| 移动端 E2E  | `npm run test:e2e`        | 14 passed                                                                                               |
+| 类型        | `npm run typecheck`       | passed                                                                                                  |
+| Lint        | `npm run lint`            | passed                                                                                                  |
+| 格式        | `npm run format:check`    | passed                                                                                                  |
+| Android APK | `./gradlew assembleDebug` | BUILD SUCCESSFUL                                                                                        |
+| iOS 模拟器  | GitHub Actions macOS      | build + launch passed（[CI run](https://github.com/Phanstal/Rinse/actions/runs/41301713612)）           |
+| CI 全流程   | GitHub Actions            | Web / Android / iOS 全部 passed（[CI run](https://github.com/Phanstal/Rinse/actions/runs/41301713612)） |
 
 ## 发布产物验收
 
@@ -181,6 +181,20 @@ open App.xcworkspace
 - [ ] 真机验收记录补充到本文件。
 
 ## 发布记录
+
+### v0.1.2
+
+- Release：[v0.1.2](https://github.com/Phanstal/Rinse/releases/tag/v0.1.2)
+- Release workflow：[run 41302174592](https://github.com/Phanstal/Rinse/actions/runs/41302174592)
+- 发布校验：以下三个文件的实际 SHA-256 与 `SHA256SUMS.txt` 完全一致。
+- APK：`Rinse-0.1.2-android-debug.apk`，5,263,837 字节，SHA-256 `b0254d7b37170ddcfac26c6d35d81650724a1981e22842b003d7e52451816983`；在 API 33 模拟器上先卸载旧 debug 签名版本，再全新安装发布 APK，`aapt` 确认包名 `com.phanstal.rinse`、versionCode `3`、versionName `0.1.2`；启动后生成 8 条示例数据，历史页可打开备份面板。
+- iOS IPA：`Rinse-0.1.2-ios-unsigned.ipa`，1,706,170 字节，SHA-256 `ea7daa439d1909b7fb12b984ef8bd068524c7e973b595bfeb1d1729632617df6`；解包确认包含 `Payload/App.app/App`、Bundle ID `com.phanstal.rinse`、版本 `0.1.2 (3)`、arm64 架构；未签名，需重签。
+- iOS 模拟器 zip：`Rinse-0.1.2-ios-simulator.zip`，2,234,474 字节，SHA-256 `36b1ce84945b511b94bfb962e5fd5e2b10427dec2cbb288f778571a9498d48f8`；包含 x86_64 与 arm64 架构；CI 已在 iPhone 模拟器启动并截图。
+- 备份恢复：Android debug WebView 中从 8 条示例数据恢复 2 条备份，返回首页显示 2 个水泡，刷新后仍为 2 条；Web E2E 覆盖复制路径之外的下载、校验、替换和非法备份拒绝。
+- 日期刷新：Web E2E 用可控时钟跨过本地午夜，列表中的到期文案从「2 days overdue」自动变为「3 days overdue」。
+- 本版新增：本地 JSON 备份/恢复；跨午夜与回前台日期刷新；修复到期天数按当前时刻而非日历日计算的问题。
+
+### v0.1.1
 
 - Release：[v0.1.1](https://github.com/Phanstal/Rinse/releases/tag/v0.1.1)（v0.1.0 已由本版取代）
 - Release workflow：[run 40490994528](https://github.com/Phanstal/Rinse/actions/runs/40490994528)
