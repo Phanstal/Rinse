@@ -77,7 +77,7 @@ export function createInitialData(now: Date = new Date()): RinseData {
 }
 
 export function elapsedDays(item: CleaningItem, now: Date = new Date()): number {
-  return Math.max(0, Math.floor((startOfToday(now) - dateAtMidnight(item.lastCleaned)) / DAY_MS));
+  return Math.max(0, Math.round((startOfToday(now) - dateAtMidnight(item.lastCleaned)) / DAY_MS));
 }
 
 export function cycleProgress(item: CleaningItem, now: Date = new Date()): number {
@@ -107,7 +107,7 @@ export function dueDate(item: CleaningItem): Date {
 }
 
 export function dueCopy(item: CleaningItem, now: Date = new Date()): string {
-  const days = Math.ceil((dueDate(item).getTime() - now.getTime()) / DAY_MS);
+  const days = Math.round((dueDate(item).getTime() - startOfToday(now)) / DAY_MS);
   if (days < 0) return `${Math.abs(days)} day${days === -1 ? '' : 's'} overdue`;
   if (days === 0) return 'Due today';
   if (days === 1) return 'Due tomorrow';

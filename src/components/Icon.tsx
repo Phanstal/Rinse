@@ -1,7 +1,17 @@
 import type { ReactNode } from 'react';
 
 export type IconName =
-  'plus' | 'close' | 'history' | 'check' | 'back' | 'undo' | 'bubbles' | 'list';
+  | 'plus'
+  | 'close'
+  | 'history'
+  | 'check'
+  | 'back'
+  | 'undo'
+  | 'bubbles'
+  | 'list'
+  | 'archive'
+  | 'download'
+  | 'upload';
 
 const paths: Record<IconName, ReactNode> = {
   plus: <path d="M12 5v14M5 12h14" />,
@@ -33,6 +43,24 @@ const paths: Record<IconName, ReactNode> = {
       <circle cx="5" cy="7" r="0.8" />
       <circle cx="5" cy="12" r="0.8" />
       <circle cx="5" cy="17" r="0.8" />
+    </>
+  ),
+  archive: (
+    <>
+      <path d="M4 8h16v12H4z" />
+      <path d="M3 4h18v4H3zM9 12h6" />
+    </>
+  ),
+  download: (
+    <>
+      <path d="M12 4v11m0 0 4-4m-4 4-4-4" />
+      <path d="M5 19h14" />
+    </>
+  ),
+  upload: (
+    <>
+      <path d="M12 16V5m0 0 4 4m-4-4-4 4" />
+      <path d="M5 19h14" />
     </>
   ),
 };

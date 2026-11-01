@@ -79,6 +79,15 @@ describe('date and cycle copy', () => {
     expect(summaryCopy([kitchenWithInterval(1)], now)).toBe('1 area ready for care');
   });
 
+  it('counts due days from local midnight, not from the current time of day', () => {
+    const oneDayOverdue = { id: 'a', name: 'A', interval: 3, lastCleaned: '2026-10-23' };
+    expect(dueCopy(oneDayOverdue, new Date(2026, 9, 27, 18, 30))).toBe('1 day overdue');
+    expect(dueCopy(oneDayOverdue, new Date(2026, 9, 27, 0, 5))).toBe('1 day overdue');
+
+    const twoDaysOverdue = { id: 'b', name: 'B', interval: 3, lastCleaned: '2026-10-22' };
+    expect(dueCopy(twoDaysOverdue, new Date(2026, 9, 27, 23, 59))).toBe('2 days overdue');
+  });
+
   it('sorts by urgency and then by the oldest cleaning time', () => {
     const items = sample();
     const sorted = sortItems(items, now);

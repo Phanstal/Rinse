@@ -7,6 +7,8 @@ import { HomeView } from '../features/home/HomeView';
 import { DetailSheet } from '../features/detail/DetailSheet';
 import { ItemEditor } from '../features/editor/ItemEditor';
 import { HistoryPage } from '../features/history/HistoryPage';
+import { DataSheet } from '../features/data/DataSheet';
+import { useNow } from './useNow';
 
 export function App() {
   const store = useRinse();
@@ -14,13 +16,15 @@ export function App() {
   const [homeMode, setHomeMode] = useState<HomeMode>('bubbles');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editing, setEditing] = useState<'new' | string | null>(null);
+  const [dataOpen, setDataOpen] = useState(false);
   const [toast, setToast] = useState('');
+  const now = useNow();
   const toastTimer = useRef<number | null>(null);
-  const navigation = useRef({ view, selectedId, editing });
+  const navigation = useRef({ view, selectedId, editing, dataOpen });
 
   useEffect(() => {
-    navigation.current = { view, selectedId, editing };
-  }, [view, selectedId, editing]);
+    navigation.current = { view, selectedId, editing, dataOpen };
+  }, [view, selectedId, editing, dataOpen]);
 
   useEffect(
     () => () => {
@@ -46,6 +50,10 @@ export function App() {
       const current = navigation.current;
       if (current.editing) {
         setEditing(null);
+        return;
+      }
+      if (current.dataOpen) {
+        setDataOpen(false);
         return;
       }
       if (current.selectedId) {
@@ -143,11 +151,12 @@ export function App() {
           entries={store.data.history}
           onBack={() => setView('home')}
           onUndo={(entry) => undoCleaning(entry.id)}
+          onOpenData={() => setDataOpen(true)}
         />
       ) : (
         <HomeView
           items={store.data.items}
-          now={new Date()}
+          now={now}
           mode={homeMode}
           onModeChange={setHomeMode}
           onOpenItem={openItem}
@@ -160,7 +169,7 @@ export function App() {
       {currentItem && (
         <DetailSheet
           item={currentItem}
-          now={new Date()}
+          now={now}
           onClose={() => setSelectedId(null)}
           onClean={() => cleanItem(currentItem.id)}
           onEdit={() => openEdit(currentItem)}
@@ -174,6 +183,18 @@ export function App() {
           item={editing === 'new' ? undefined : editingItem}
           onClose={() => setEditing(null)}
           onSave={saveItem}
+        />
+      )}
+
+      {dataOpen && (
+        <DataSheet
+          data={store.data}
+          onClose={() => setDataOpen(false)}
+          onRestore={(next) => {
+            store.replace(next);
+            setDataOpen(false);
+            showToast('Backup restored');
+          }}
         />
       )}
 

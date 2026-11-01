@@ -18,7 +18,7 @@
 | Android  | Android 13 / API 33 x86_64 模拟器，1080 × 2400 | GitHub Actions Ubuntu + JDK 17 + Android SDK                         |
 | iOS      | 未在本地运行（Windows 无 Xcode）               | GitHub Actions macOS 14：模拟器构建通过；设备未签名包由 release 构建 |
 | Web      | Edge / Chromium，390 × 844 和 360 × 740        | GitHub Actions Chromium 移动端 E2E                                   |
-| 应用版本 | 0.1.1（versionCode 2 / build 2）               | 同左                                                                 |
+| 应用版本 | 0.1.2（versionCode 3 / build 3）               | 同左                                                                 |
 | 日期     | 2026-10-27                                     | 以 release workflow 实际运行日期为准                                 |
 
 ## Android 验收步骤
@@ -73,10 +73,11 @@
 
 依次验证：
 
-1. 编辑面板打开时按返回 → 关闭编辑面板。
-2. 详情面板打开时按返回 → 关闭详情面板。
-3. 历史页按返回 → 返回首页。
-4. 首页按返回 → 应用退到后台，不崩溃。
+1. 备份面板打开时按返回 → 关闭备份面板。
+2. 编辑面板打开时按返回 → 关闭编辑面板。
+3. 详情面板打开时按返回 → 关闭详情面板。
+4. 历史页按返回 → 返回首页。
+5. 首页按返回 → 应用退到后台，不崩溃。
 
 ### A8 重启持久化
 
@@ -98,13 +99,27 @@
 - 在 360 × 740 视口下无横向滚动，`+` 按钮不被裁切。
 - 应用锁定竖屏；旋转设备不应变成横屏。
 
+### A11 备份与恢复
+
+- 进入历史页，点右上角备份图标，确认面板显示当前项目数与日志数。
+- 点「Copy backup」，粘贴到任意文本编辑器，确认 JSON 包含 `format: "rinse-backup"`、`version: 1`、`data.items` 与 `data.history`。
+- 点「Restore from a backup」，粘贴一份有效备份，点「Check backup」，确认出现条目预览。
+- 点「Replace my data」，出现「Backup restored」，返回首页后水泡数量与备份一致。
+- 重启应用，恢复后的数据仍在；再用无效 JSON 测试，应显示错误且不修改现有数据。
+
+### A12 日期自动刷新
+
+- 把系统时间改到 23:59，进入列表视图，记录某个周期的到期文案。
+- 等系统跨过午夜，或把应用切到后台再回到前台。
+- 对应周期的剩余天数与紧急状态应在不重启应用的情况下更新。
+
 ## iOS 验收步骤
 
 本地没有 Mac，以下需要在 macOS 或真机上完成。
 
 ### I1 模拟器运行
 
-- 下载 `Rinse-0.1.1-ios-simulator.zip`，解压得到 `App.app`。
+- 下载 `Rinse-0.1.2-ios-simulator.zip`，解压得到 `App.app`。
 - 打开 Xcode Simulator，把 `App.app` 拖入模拟器；或从源码运行：
 
 ```bash
@@ -124,7 +139,7 @@ open App.xcworkspace
 - 在 Xcode 打开 `ios/App/App.xcworkspace`。
 - 选择 App target → Signing & Capabilities，选择自己的 Team，修改唯一 Bundle Identifier。
 - 连接 iPhone，选择设备 Run。
-- 或者用 Sideloadly / AltStore 重签 `Rinse-0.1.1-ios-unsigned.ipa`。
+- 或者用 Sideloadly / AltStore 重签 `Rinse-0.1.2-ios-unsigned.ipa`。
 - 检查启动图、状态栏、安全区、触感反馈与本地持久化。
 - 杀进程后重新打开，数据仍在。
 
@@ -140,13 +155,15 @@ open App.xcworkspace
 - 检查桌面宽度下是否居中显示手机画布；移动端浏览器全屏显示。
 - 浏览器刷新后数据仍在 localStorage。
 - 清除站点数据后回到示例数据。
+- 历史页右上角打开备份面板，复制/下载 JSON；再粘贴恢复，刷新后恢复的数据仍在。
+- 在本地午夜前后停留，列表中的到期天数会自动跨日更新。
 
 ## 自动化证据
 
 | 检查        | 命令                      | 结果                                                                                          |
 | ----------- | ------------------------- | --------------------------------------------------------------------------------------------- |
-| 单元测试    | `npm test`                | 16 passed                                                                                     |
-| 移动端 E2E  | `npm run test:e2e`        | 11 passed                                                                                     |
+| 单元测试    | `npm test`                | 22 passed                                                                                     |
+| 移动端 E2E  | `npm run test:e2e`        | 14 passed                                                                                     |
 | 类型        | `npm run typecheck`       | passed                                                                                        |
 | Lint        | `npm run lint`            | passed                                                                                        |
 | 格式        | `npm run format:check`    | passed                                                                                        |

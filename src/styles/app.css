@@ -330,6 +330,7 @@ h1 {
   border-radius: 17px;
   box-shadow: 0 10px 30px #365b711a;
   transform: translateX(-50%);
+  transition: opacity 0.18s ease;
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
 }
@@ -656,9 +657,220 @@ h1 {
   line-height: 1.45;
 }
 
+.secondary-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  color: #3d5a68;
+  background: #eef4f6;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.secondary-button:active {
+  background: #e4edf0;
+}
+
+.primary-button svg,
+.secondary-button svg,
+.data-restore-link svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.data-sheet {
+  padding-top: 8px;
+}
+
+.data-sheet h2 {
+  padding-right: 48px;
+  margin-bottom: 12px;
+  font-size: 25px;
+  font-weight: 570;
+  line-height: 1.15;
+  letter-spacing: -0.04em;
+}
+
+.data-intro {
+  max-width: 330px;
+  margin: 0 0 18px;
+  color: #728186;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.backup-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.backup-stats div {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 14px 16px;
+  background: #f5f8f9;
+  border-radius: 17px;
+}
+
+.backup-stats strong {
+  color: #344b57;
+  font-size: 21px;
+  font-weight: 580;
+  letter-spacing: -0.03em;
+}
+
+.backup-stats span {
+  color: #8d9a9f;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.backup-actions {
+  display: grid;
+  gap: 8px;
+}
+
+.backup-actions .primary-button,
+.backup-actions .secondary-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.data-restore-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  min-height: 44px;
+  margin-top: 8px;
+  color: #39759e;
+  background: transparent;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.data-restore-link:active {
+  background: #eef4f6;
+}
+
+.restore-panel {
+  margin-top: 14px;
+  padding-top: 16px;
+  border-top: 1px solid #e8edef;
+}
+
+.restore-panel label {
+  display: block;
+  color: #65747a;
+  font-size: 12px;
+  font-weight: 620;
+}
+
+.restore-panel label > span {
+  display: block;
+  margin: 0 2px 7px;
+}
+
+.restore-panel textarea {
+  width: 100%;
+  min-height: 112px;
+  padding: 12px 14px;
+  color: #344147;
+  background: #f7f9f9;
+  border: 1px solid #e2e9eb;
+  border-radius: 15px;
+  outline: 0;
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+  font-size: 11px;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+.restore-panel textarea:focus {
+  border-color: #8fc7eb;
+  box-shadow: 0 0 0 3px #a8d7f538;
+}
+
+.restore-preview {
+  margin: 2px 0 10px;
+  padding: 14px 15px;
+  background: #eef7fb;
+  border-radius: 16px;
+}
+
+.restore-preview strong {
+  color: #245a7c;
+  font-size: 13px;
+}
+
+.restore-preview p {
+  margin: 6px 0 12px;
+  color: #58727d;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.restore-confirm {
+  display: grid;
+  gap: 6px;
+}
+
+.restore-confirm .primary-button {
+  min-height: 46px;
+  font-size: 13px;
+}
+
+.restore-confirm .data-restore-link {
+  margin-top: 0;
+}
+
+.data-note {
+  margin: 16px 2px 0;
+  color: #98a4a8;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.history-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.history-data {
+  flex: none;
+  color: #58727d;
+  background: #f0f4f5d9;
+}
+
+.history-data svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .toast {
   position: fixed;
-  bottom: max(30px, env(safe-area-inset-bottom));
+  bottom: max(122px, calc(env(safe-area-inset-bottom) + 108px));
   left: 50%;
   z-index: 40;
   padding: 11px 17px;
@@ -1099,6 +1311,20 @@ h1 {
 body[data-native='true'] {
   padding: 0;
   background: #fcfcfa;
+}
+
+/* Android WebView 109 shows a hard seam when the tall backup sheet is
+   composited over a blurred layer. Dim without blur there to keep it clean. */
+body[data-native='true'] .sheet-layer {
+  background: #2a373e42;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* Keep the transient toast clear of the bottom controls on the home view. */
+.app-shell:has(.toast) .mode-banner {
+  opacity: 0;
+  pointer-events: none;
 }
 
 body[data-native='true'] .app-shell {

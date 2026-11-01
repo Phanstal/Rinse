@@ -14,9 +14,9 @@
 
 | 平台       | 文件                            | 说明                                           |
 | ---------- | ------------------------------- | ---------------------------------------------- |
-| Android    | `Rinse-0.1.1-android-debug.apk` | 可直接安装的 debug 签名 APK                    |
-| iOS        | `Rinse-0.1.1-ios-unsigned.ipa`  | 未签名 IPA，需要使用自己的 Apple ID 重签后安装 |
-| iOS 模拟器 | `Rinse-0.1.1-ios-simulator.zip` | 需要 macOS + Xcode，解压后拖入模拟器           |
+| Android    | `Rinse-0.1.2-android-debug.apk` | 可直接安装的 debug 签名 APK                    |
+| iOS        | `Rinse-0.1.2-ios-unsigned.ipa`  | 未签名 IPA，需要使用自己的 Apple ID 重签后安装 |
+| iOS 模拟器 | `Rinse-0.1.2-ios-simulator.zip` | 需要 macOS + Xcode，解压后拖入模拟器           |
 | 校验       | `SHA256SUMS.txt`                | 所有发布文件的 SHA-256                         |
 
 ### Android 安装
@@ -46,15 +46,20 @@
 - **历史与撤销**：每次清洁都会写入本地日志，可一键撤销，恢复上一次清洁日期。
 - **列表视图**：除水泡视图外，提供完整的可滚动列表，适合周期较多的场景。
 - **本地持久化**：Android 使用 SharedPreferences，iOS 使用 UserDefaults，Web 使用 localStorage；刷新或重启应用后数据仍在。
-- **原生手感**：Android 返回键会按「编辑面板 → 详情 → 历史 → 退出」的顺序逐层返回；适配系统安全区、状态栏与底部手势条。
+- **备份与恢复**：在清洁历史右上角打开备份面板，可复制或下载 JSON 备份，也可粘贴备份替换本机数据。
+- **原生手感**：Android 返回键会按「编辑面板 → 备份面板 → 详情 → 历史 → 退出」的顺序逐层返回；适配系统安全区、状态栏与底部手势条。
+- **日期自动刷新**：跨过本地午夜或应用回到前台时，剩余天数与紧急状态会立即重新计算。
 
 ![详情面板](docs/screenshots/web-detail.png)
 ![新增周期](docs/screenshots/web-editor.png)
 ![清洁历史](docs/screenshots/web-history-filled.png)
+![备份与恢复](docs/screenshots/web-backup.png)
 
 Android 原生运行（CI 构建 APK，API 33 模拟器）：
 
 ![Android 原生首页](docs/screenshots/native-android-release.png)
+![Android 原生清洁历史](docs/screenshots/native-android-history.png)
+![Android 原生备份面板](docs/screenshots/native-android-backup.png)
 
 iOS 模拟器运行（GitHub Actions macOS，iPhone 15 Pro）：
 
@@ -64,7 +69,7 @@ iOS 模拟器运行（GitHub Actions macOS，iPhone 15 Pro）：
 
 - 不创建账号，不连接服务器，不发送分析或崩溃数据。
 - 数据只写入当前设备的应用私有存储。
-- 卸载应用或在系统设置中清除应用数据会删除记录；当前版本没有导出/导入功能。
+- 卸载应用或在系统设置中清除应用数据会删除记录；建议先在清洁历史里导出一份 JSON 备份。
 
 ## 开发
 

@@ -20,6 +20,7 @@ export interface RinseStore {
   add: (draft: { name: string; interval: number; lastCleaned: string }) => void;
   edit: (itemId: string, draft: { name: string; interval: number; lastCleaned: string }) => void;
   remove: (itemId: string) => void;
+  replace: (data: RinseData) => void;
 }
 
 export function useRinse(repository?: RinseRepository): RinseStore {
@@ -81,5 +82,9 @@ export function useRinse(repository?: RinseRepository): RinseStore {
     setData((current) => removeItem(current, itemId));
   }, []);
 
-  return { data, ready, error, clean, undo, add, edit, remove };
+  const replace = useCallback((next: RinseData) => {
+    setData(next);
+  }, []);
+
+  return { data, ready, error, clean, undo, add, edit, remove, replace };
 }

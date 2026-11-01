@@ -160,6 +160,63 @@ test('shows the empty state and can add the first item', async ({ page }) => {
   await expect(page.getByText('No areas ready for care')).toBeVisible();
 });
 
+test('exports a summary and restores a pasted backup', async ({ page }) => {
+  await openHome(page);
+  await page.getByRole('button', { name: 'Cleaning history' }).click();
+  await page.getByRole('button', { name: 'Backup and restore' }).click();
+
+  const dataDialog = page.getByRole('dialog', { name: 'Backup and restore' });
+  await expect(dataDialog.locator('.backup-stats strong').first()).toHaveText('8');
+  await expect(dataDialog.locator('.backup-stats div').first()).toContainText('items');
+  await expect(dataDialog.getByText('Copy backup')).toBeVisible();
+  await expect(dataDialog.getByText('Download .json')).toBeVisible();
+
+  await dataDialog.getByRole('button', { name: 'Restore from a backup' }).click();
+  await dataDialog.getByPlaceholder('Paste the contents of a Rinse backup here').fill(
+    JSON.stringify({
+      items: [{ id: 'desk', name: 'Desk', interval: 7, lastCleaned: '2020-01-01' }],
+      history: [],
+    }),
+  );
+  await dataDialog.getByRole('button', { name: 'Check backup' }).click();
+  await expect(dataDialog.getByText('Ready to restore')).toBeVisible();
+  await dataDialog.getByRole('button', { name: 'Replace my data' }).click();
+  await expect(page.getByText('Backup restored')).toBeVisible();
+
+  await page.getByRole('button', { name: 'Back to home' }).click();
+  await expect(page.locator('.bubble')).toHaveCount(1);
+  await expect(page.getByRole('button', { name: /Desk/ })).toBeVisible();
+});
+
+test('downloads a portable backup file', async ({ page }) => {
+  await openHome(page);
+  await page.getByRole('button', { name: 'Cleaning history' }).click();
+  await page.getByRole('button', { name: 'Backup and restore' }).click();
+
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Download .json' }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toMatch(/^rinse-backup-\d{4}-\d{2}-\d{2}\.json$/);
+
+  const stream = await download.createReadStream();
+  let contents = '';
+  for await (const chunk of stream) contents += chunk.toString();
+  const payload = JSON.parse(contents) as { format: string; data: { items: unknown[] } };
+  expect(payload.format).toBe('rinse-backup');
+  expect(payload.data.items).toHaveLength(8);
+});
+
+test('refreshes relative dates after the local midnight', async ({ page }) => {
+  await page.clock.install({ time: new Date(2026, 9, 27, 23, 59, 30) });
+  await page.goto('/');
+  await expect(page.getByText('3 areas ready for care')).toBeVisible();
+  await page.getByRole('tab', { name: 'List view' }).click();
+  await expect(page.getByText('2 days overdue · Every 3 days')).toBeVisible();
+
+  await page.clock.fastForward(35_000);
+  await expect(page.getByText('3 days overdue · Every 3 days')).toBeVisible();
+});
+
 test('fits a 360 × 740 Android viewport without horizontal scrolling', async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 740 });
   await page.goto('/');
