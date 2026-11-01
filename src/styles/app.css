@@ -1380,7 +1380,7 @@ h1 {
 .home-card {
   position: absolute;
   z-index: 2;
-  top: 150px;
+  top: max(150px, calc(env(safe-area-inset-top) + 122px));
   right: 16px;
   bottom: max(86px, calc(env(safe-area-inset-bottom) + 68px));
   left: 16px;
@@ -1453,10 +1453,14 @@ h1 {
 }
 
 .home-card .bubble {
-  width: clamp(62px, 18vw, 78px);
-  height: clamp(62px, 18vw, 78px);
+  width: clamp(64px, 19vw, 80px);
+  height: clamp(64px, 19vw, 80px);
   padding: 8px;
   font-size: 10px;
+}
+
+.home-card .bubble small {
+  white-space: nowrap;
 }
 
 .home-card .bubble-position-0 {
