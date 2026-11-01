@@ -2,7 +2,7 @@
 
 ## 验收范围
 
-本清单覆盖 Android、iOS 和 Web 三个运行面。v0.1.3 已在本地 API 33 模拟器完成一轮验收；iOS 模拟器由 GitHub Actions 的 macOS 14 runner 构建，本地没有 macOS，因此 iOS 启动与真机安装仍需在 Mac 上补充验证。
+本清单覆盖 Android、iOS 和 Web 三个运行面。v0.1.3 已在本地 API 33 模拟器完成一轮验收；iOS 模拟器由 GitHub Actions 的 macOS 15 runner 构建并启动，本地没有 macOS，因此 iOS 真机安装仍需在 Mac 上补充验证。
 
 验收目标不是只看「能打开」，而是同时确认：
 
@@ -13,13 +13,13 @@
 
 ## 验收环境
 
-| 项目     | 本地验收                                       | 发布验证                                                             |
-| -------- | ---------------------------------------------- | -------------------------------------------------------------------- |
-| Android  | Android 13 / API 33 x86_64 模拟器，1080 × 2400 | GitHub Actions Ubuntu + JDK 17 + Android SDK                         |
-| iOS      | 未在本地运行（Windows 无 Xcode）               | GitHub Actions macOS 14：模拟器构建通过；设备未签名包由 release 构建 |
-| Web      | Edge / Chromium，390 × 844 和 360 × 740        | GitHub Actions Chromium 移动端 E2E                                   |
-| 应用版本 | 0.1.3（versionCode 4 / build 4）               | 同左                                                                 |
-| 日期     | 2026-11-02                                     | 以 release workflow 实际运行日期为准                                 |
+| 项目     | 本地验收                                       | 发布验证                                                               |
+| -------- | ---------------------------------------------- | ---------------------------------------------------------------------- |
+| Android  | Android 13 / API 33 x86_64 模拟器，1080 × 2400 | GitHub Actions Ubuntu + JDK 17 + Android SDK                           |
+| iOS      | 未在本地运行（Windows 无 Xcode）               | GitHub Actions macOS 15：模拟器构建与启动；设备未签名包由 release 构建 |
+| Web      | Edge / Chromium，390 × 844 和 360 × 740        | GitHub Actions Chromium 移动端 E2E                                     |
+| 应用版本 | 0.1.3（versionCode 4 / build 4）               | 同左                                                                   |
+| 日期     | 2026-11-02                                     | 以 release workflow 实际运行日期为准                                   |
 
 ## Android 验收步骤
 
