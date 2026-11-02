@@ -1,19 +1,18 @@
-# Rinse v0.1.4 发布说明
+# Rinse v0.1.5 发布说明
 
 本地优先清洁周期追踪器，提供 Android、iOS 与 Web 版本。
 
-这一版直接按 [Figma Make 原型（Version 26）](https://www.figma.com/make/zpog9lRPWVomLBPYMTKvOp/Rinse-Cleaning-Cycle-Tracker) 的源文件重新同步界面，修正了 v0.1.3 仍残留旧版头部、摘要与三视图的问题。
+这一版先通过 Figma MCP 重新抓取 [Figma Make 原型](https://www.figma.com/make/zpog9lRPWVomLBPYMTKvOp/Rinse-Cleaning-Cycle-Tracker) 的最新源码，并与 v0.1.4 基线逐字节比较，确认最新版界面代码（`App.tsx`、`index.css`）没有变化。真正需要补齐的是**品牌资产**：最新 Make 使用单颗 3D 玻璃水泡图标，而 Android / iOS 的桌面图标、启动画面和 PWA 图标此前仍是旧的三水泡插画。v0.1.5 把最新图标同步到全部运行面。
 
 ## 本版更新
 
-- **品牌头部**：改为 `rinse` 图标 + 字标，右侧是设置与清洁历史两个圆形图标按钮；移除旧版大标题、摘要和副标题。
-- **双视图首页**：只保留 Bubbles / List 两个视图，分段切换移回玻璃卡片底部；列表行、剩余天数和状态色与 Make 一致。
-- **设置页**：新增 Notifications 开关、Privacy 展开说明、Backup & restore 入口，以及需要长按 1.2 秒确认的 Delete cleaning data。
-- **历史页**：改为 `ACTIVITY / Cleaning log` 结构；保留记录胶囊、Undo 与 Make 的空状态，备份入口移到设置。
-- **按压节奏**：长按清洁由 0.65 秒改为 Make 的 0.4 秒；轻点仍打开详情。
-- **空状态**：改为 `Start with one small thing.` 的首项添加引导，不再复用旧版摘要。
-- **WebView 109 兼容**：移除水泡底色对 `color-mix()` 的依赖，改用主题色变量 + 白色半透明叠层；在 Android 13 / WebView 109 模拟器上确认深色中心水泡与浅色外围水泡文字均可读。
-- **版本同步**：Android versionCode 5 / versionName 0.1.4，iOS build 5 / version 0.1.4。
+- **最新 Make 核对**：最新 `App.tsx` SHA-256 `86AB0DEC…EE42C`、`index.css` SHA-256 `DC96BBEF…F3221`，与 v0.1.4 基线一致，界面布局与交互无需重做。
+- **Web 图标**：头部 256px 品牌图标、favicon、Apple touch icon、PWA 192/512 图标全部换为最新单水泡图标。
+- **PWA manifest**：修正图标路径与 MIME，新增 `public/icons/`，安装到桌面后使用新图标。
+- **Android 桌面图标**：重新生成全部密度 `ic_launcher`、圆形图标、自适应图标前景/背景，统一为最新图标。
+- **Android 启动画面**：全部 26 张横竖屏 / 深浅色 splash 改为新图标 + `rinse` 字标。
+- **iOS**：`AppIcon-512@2x.png` 与 6 张启动图替换为最新图标，保持不透明 App Icon。
+- **版本同步**：Android versionCode 6 / versionName 0.1.5，iOS build 6 / version 0.1.5。
 
 ## 功能
 
@@ -28,16 +27,17 @@
 
 ## 下载文件
 
-- `Rinse-0.1.4-android-debug.apk` — Android debug 签名 APK，可直接侧载。
-- `Rinse-0.1.4-ios-unsigned.ipa` — iOS 未签名 IPA，需要自行用 Apple ID 重签。
-- `Rinse-0.1.4-ios-simulator.zip` — iOS 模拟器 App，需要 macOS + Xcode。
+- `Rinse-0.1.5-android-debug.apk` — Android debug 签名 APK，可直接侧载。
+- `Rinse-0.1.5-ios-unsigned.ipa` — iOS 未签名 IPA，需要自行用 Apple ID 重签。
+- `Rinse-0.1.5-ios-simulator.zip` — iOS 模拟器 App，需要 macOS + Xcode。
 - `SHA256SUMS.txt` — 校验和。
 
 ## 验证情况
 
-- Web：lint、格式、类型检查、22 项单元测试、15 项移动端 E2E 全部通过；E2E 覆盖品牌头部、双视图切换、设置页与通知开关、隐私展开、长按删除保护、400ms 长按清洁、历史撤销、备份恢复、跨午夜刷新与 360 × 740 窄屏无横向滚动。
-- Android：API 33 x86_64 模拟器（1080 × 2400，WebView 109）完成卸载重装、冷启动、双视图、设置、详情、新增、清洁、历史、备份与删除确认验证；`dumpsys` 确认 versionCode 5 / versionName 0.1.4，首页、列表、设置、详情、历史、备份均有截图。
-- iOS：GitHub Actions macOS 15 runner 构建模拟器包并在 iPhone 16 Pro 模拟器安装、启动、截图，同时构建设备未签名 IPA；本地环境为 Windows，无法在真机上运行验证；真机安装需要用户自己的 Apple 签名。
+- Web：lint、格式、类型检查、22 项单元测试、15 项移动端 E2E 全部通过。
+- Android：API 33 x86_64 模拟器（1080 × 2400）卸载重装 0.1.5 APK，确认桌面图标为最新的单颗玻璃水泡、启动画面为 `rinse` 字标，核心流程无回归。
+- iOS：GitHub Actions macOS 15 runner 构建设备未签名 IPA 与模拟器 App；资源目录由 Xcode 资源编译器校验并打包。
+- 真实界面代码与最新 Make 一致，本轮不重做布局；详细对比见 `REPORT.md`。
 
 ## 已知限制
 
@@ -55,5 +55,5 @@ sha256sum -c SHA256SUMS.txt
 或在 Windows PowerShell 中：
 
 ```powershell
-Get-FileHash .\Rinse-0.1.4-android-debug.apk -Algorithm SHA256
+Get-FileHash .\Rinse-0.1.5-android-debug.apk -Algorithm SHA256
 ```

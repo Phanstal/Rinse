@@ -14,9 +14,9 @@
 
 | 平台       | 文件                            | 说明                                           |
 | ---------- | ------------------------------- | ---------------------------------------------- |
-| Android    | `Rinse-0.1.4-android-debug.apk` | 可直接安装的 debug 签名 APK                    |
-| iOS        | `Rinse-0.1.4-ios-unsigned.ipa`  | 未签名 IPA，需要使用自己的 Apple ID 重签后安装 |
-| iOS 模拟器 | `Rinse-0.1.4-ios-simulator.zip` | 需要 macOS + Xcode，解压后拖入模拟器           |
+| Android    | `Rinse-0.1.5-android-debug.apk` | 可直接安装的 debug 签名 APK                    |
+| iOS        | `Rinse-0.1.5-ios-unsigned.ipa`  | 未签名 IPA，需要使用自己的 Apple ID 重签后安装 |
+| iOS 模拟器 | `Rinse-0.1.5-ios-simulator.zip` | 需要 macOS + Xcode，解压后拖入模拟器           |
 | 校验       | `SHA256SUMS.txt`                | 所有发布文件的 SHA-256                         |
 
 ### Android 安装
@@ -39,6 +39,7 @@
 
 ## 功能
 
+- **最新品牌图标**：v0.1.5 通过 Figma MCP 重新抓取 Make 源，确认界面代码未变，并把最新单颗 3D 玻璃水泡图标同步到 Android 桌面/启动画面、iOS AppIcon 与 PWA。
 - **玻璃首页卡片**：按 Figma Make `Version 26` 重做首页，柔和渐变背景配半透明圆角卡片，顶部是品牌标识、设置与历史入口，底部是悬浮的水泡 / 列表双视图切换。
 - **水泡视图**：8 个空间以高低错落的水泡展示；最急的水泡位于中心并更大、更深，其余水泡按紧急度向外扩散。
 - **列表视图**：完整的可滚动清单，显示周期、状态与剩余天数；双视图共享同一份排序与状态颜色。
@@ -67,6 +68,11 @@ Android 原生运行（本机 API 33 模拟器，1080 × 2400）：
 ![Android 原生设置页](docs/screenshots/native-android-settings.png)
 ![Android 原生清洁历史](docs/screenshots/native-android-history.png)
 ![Android 原生备份面板](docs/screenshots/native-android-backup.png)
+
+Android 桌面图标与 Android 12 启动画面（v0.1.5 最新品牌资产）：
+
+![Android 桌面图标](docs/screenshots/android-launcher-icon.png)
+![Android 启动画面](docs/screenshots/android-splash.png)
 
 iOS 模拟器运行（GitHub Actions macOS 15，iPhone 16 Pro 模拟器）：
 

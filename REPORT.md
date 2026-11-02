@@ -1,64 +1,62 @@
-# Rinse v0.1.4 改版报告
+# Rinse v0.1.5 改版报告
 
 ## 1. 结论
 
-v0.1.4 按 [Figma Make 原型（Version 26）](https://www.figma.com/make/zpog9lRPWVomLBPYMTKvOp/Rinse-Cleaning-Cycle-Tracker) 重新同步了整套移动端界面。v0.1.3 虽然换了玻璃卡片，但仍保留旧版大标题、摘要、三视图切换，以及只在历史页里的备份入口，所以视觉上仍像上一版。这一版直接以 Make 源文件为准，替换为：
+本轮通过 Figma MCP 重新读取 [Rinse Cleaning Cycle Tracker](https://www.figma.com/make/zpog9lRPWVomLBPYMTKvOp/Rinse-Cleaning-Cycle-Tracker) 的 Make 源文件（2026-11-02 23:03 抓取，共 54 个文件），并与 v0.1.4 使用的 Version 26 基线逐字节比较：
 
-- 紧凑品牌头部：`rinse` 图标 + 字标，右侧设置与历史两个圆形按钮。
-- 首页只保留 **Bubbles / List 双视图**，切换条落回卡片内部底部。
-- 新增完整设置页：通知开关、隐私说明、备份与恢复、长按删除数据。
-- 清洁历史页改为 Make 的 `ACTIVITY / Cleaning log` 结构，备份入口移到设置。
-- 长按清洁时间由 650ms 改为 Make 的 **400ms**。
+| 文件            | SHA-256                                                            | 结论                   |
+| --------------- | ------------------------------------------------------------------ | ---------------------- |
+| `src/App.tsx`   | `86AB0DECB61A6F31C78D71F2BDE2A3D2DE92123DF55D1757CD3EAD9697BEE42C` | 与 v0.1.4 基线完全一致 |
+| `src/index.css` | `DC96BBEF707CDBE419A752887A80E7422CA59D12D5F8045552E0645F659F3221` | 与 v0.1.4 基线完全一致 |
 
-## 2. 原型依据与 Figma MCP
+因此最新版 Make 的**界面代码没有相对 v0.1.4 的增量**，头部、玻璃卡片、Bubbles / List 双视图、设置页、历史页、400ms 长按逻辑都已经是当前实现。
 
-设计基准是 Make 链接中的 Version 26。本轮先修复了 Figma MCP 连接，再直接读取 Make 的源文件与资源，而不是依赖旧截图或本地猜测：
+真正落后的是**品牌资产**：最新 Make 的 `public/rinse-icon.png` 是 1024 × 1024 的单颗 3D 玻璃水泡（浅蓝圆角底），而仓库里的 Android 启动图标、自适应图标、启动画面、iOS AppIcon 和 PWA 图标仍是旧的三水泡插画。v0.1.5 只做这一件事：把 Figma 的最新图标完整落到 Web、Android、iOS 三个运行面，不重做已经对齐的界面。
 
-- 远程 MCP 端点：`https://mcp.figma.com/mcp`，OAuth 作用域 `mcp:connect`。
-- Figma Make 文件不支持 `create_session` / 设计节点工具，因此通过 MCP **resources** 读取 `file://figma/make/source/...` 与图片资源。
-- 已取得并逐行对照 `App.tsx`（785 行）与 `index.css`（527 行），确认头部、卡片、双视图、设置页、历史页、空状态与 400ms 按压常量。
-- 因本机 DCR/OAuth 注册被 Figma 拒绝，MCP 以 `mcp-remote` 本地 stdio 代理接入，凭据只保存在受 ACL 限制的本地文件中，不写入仓库。
+## 2. 最新 Make 源与图标
 
-这一步也解释了 v0.1.3 的偏差：上一版依据的是预览代码的局部提取，保留了旧头部和三视图，实际并没有完整对齐 Version 26。
+- 远程 MCP：`https://mcp.figma.com/mcp`，通过本地 `mcp-remote` stdio 代理读取 Make resources。
+- Make 文件不支持 `create_session` 或设计节点工具，因此使用 `file://figma/make/source/...` 与 `file://figma/make/image/...` 资源。
+- 最新源文件抓取目录：`D:\Project\Elsewhere\figma-make-latest`，54/54 成功。
+- 图标源文件：`public/rinse-icon.png`，1024 × 1024，1,911,464 字节，SHA-256 `8CB9C43EB042C2BEEC10ED4C298908F97A1A7241B553742B9A1EE40CE7755C47`；与用户提供的附件一致。
+- 图标是透明圆角边缘的浅蓝底 + 单颗 3D 玻璃水泡；圆角外像素为 `rgba(0,0,0,0)`，主底色约 `#E3EFFB`。
+- 本报告不记录任何 MCP token；凭据只保存在仓库外的本地 ACL 文件中。
 
-## 3. 与 v0.1.3 的主要差异
+## 3. 本版改动
 
-| 维度       | v0.1.3                             | v0.1.4                                            |
-| ---------- | ---------------------------------- | ------------------------------------------------- |
-| 头部       | 大标题 + 摘要 + 历史入口           | 紧凑品牌字标 + 设置 / 历史图标按钮                |
-| 视图       | 水泡 / 网格 / 列表三视图           | 水泡 / 列表双视图，切换条位于卡片内底部           |
-| 设置       | 无独立设置页                       | 通知、隐私、备份与恢复、删除全部数据              |
-| 历史       | 历史页内放备份按钮                 | 历史页只保留记录与撤销，备份移到设置              |
-| 备份入口   | 清洁历史右上角                     | 设置 → Backup & restore                           |
-| 长按       | 650ms                              | 400ms                                             |
-| 空状态     | 旧版首页摘要式空状态               | Make 的 `Start with one small thing.` 首项引导    |
-| 旧 WebView | 网格依赖 `color-mix()`，文字不可读 | 水泡底色改为纯色变量 + 白色叠层，WebView 109 正常 |
+### 3.1 Web / PWA
 
-## 4. 实现结构
+- `public/rinse-icon.png`：128 → 256，使用最新 Make 图标，头部玻璃字标旁仍是 27 × 27 显示。
+- `public/favicon-32.png`、`public/apple-touch-icon.png`、`public/icon-192.png`、`public/icon-512.png`：全部由最新图标重生成。
+- `public/icons/icon-192.png`、`public/icons/icon-512.png`：新增 PWA 安装图标。
+- `public/manifest.webmanifest`：图标改为 `/icons/icon-192.png` 与 `/icons/icon-512.png`，修正上一轮 PWA 生成器留下的错误相对路径与错误 MIME。
+- `public/favicon.svg`：删除旧的手绘三水泡 SVG，`index.html` 只保留 PNG favicon，避免浏览器优先加载旧 SVG。
 
-- `src/features/home/HomeView.tsx`：品牌头部、设置 / 历史按钮、双视图分段切换、提示与新增按钮。
-- `src/features/home/BubbleField.tsx`：保留有机水泡布局与统一按压逻辑。
-- `src/features/home/useCleanPress.ts`：400ms 长按、点按阈值、回弹、触感与音效。
-- `src/features/settings/SettingsPage.tsx`：通知开关、隐私展开、备份入口、两步长按删除。
-- `src/features/history/HistoryPage.tsx`：Make 的 `ACTIVITY / Cleaning log` 头部、记录胶囊行、空状态与撤销。
-- `src/app/App.tsx`：`home / history / settings` 视图状态、通知偏好持久化、原生返回层级、删除全部数据。
-- `src/styles/base.css`：Make v26 样式主体；`src/styles/app.css` 只保留启动、存储错误、表单错误与备份面板等运行时补充样式。
-- `public/rinse-icon.png`：Make 品牌图标，128×128。
+### 3.2 Android
 
-数据层保持不变：8 条示例数据、本地持久化、历史撤销、备份恢复、跨午夜刷新、Android 分层返回。
+- `resources/` 源资产全部替换：`icon.png`、`icon-only.png`、`icon-dark.png`、`icon-foreground.png`、`icon-background.png`、`splash.png`、`splash-dark.png`。
+- 用 `@capacitor/assets@3.0.5` 重新生成 `mipmap-*` 的 `ic_launcher.png`、`ic_launcher_round.png`、`ic_launcher_background.png`、`ic_launcher_foreground.png`。
+- 所有 `drawable*` 的 26 张 `splash.png` 改为新图标 + `rinse` 字标。
+- `mipmap-anydpi-v26/ic_launcher.xml` 与 `ic_launcher_round.xml`：去掉会把背景缩成 66% 的 `inset 16.7%`，改为全幅背景色 + 前景图层，避免自适应图标出现透明边。
+- `values/ic_launcher_background.xml`：`#FFFFFF` → `#E3EFFB`，与图标边缘同色。
+- `AndroidManifest.xml` 未被资产工具改写。
 
-## 5. 交互与原生适配
+### 3.3 iOS
 
-- 按住水泡 400ms 完成清洁；长按完成后不会再次触发点击。
-- 轻点水泡打开详情；列表行只负责打开详情，避免滚动误触。
-- 设置页的删除动作需要再次长按 1200ms，未完成时松手只取消，不会误删。
-- Android 返回键顺序：编辑面板 → 备份面板 → 详情 → 历史 / 设置 → 退到后台。
-- Android WebView 109 不支持 `color-mix()`，水泡改为 `var(--bubble-color)` 纯色 + 白色半透明叠层；在模拟器上确认中心水泡与外围水泡均有正常底色和可读文字。
-- 所有 UI 文案为英文；README、验收清单与本报告为中文。
+- `AppIcon.appiconset/AppIcon-512@2x.png`：1024 × 1024 新图标，不透明，符合 App Store 图标要求。
+- `Splash.imageset/Default@1x|2x|3x~universal~anyany(.png|-dark.png)`：6 张启动图全部改为新图标 + `rinse` 字标；深浅色使用同一浅色品牌画面。
+- 未使用 `Assets.xcassets` 里遗留的 Capacitor 默认 `splash-2732x2732*.png`；它们不在 `Contents.json` 引用中，保留不影响构建。
 
-## 6. 验证
+## 4. 版本
 
-### 6.1 自动化
+- 应用版本：`0.1.5`
+- Android：versionCode `6` / versionName `0.1.5`
+- iOS：build `6` / version `0.1.5`
+- npm：`package.json` 与 `package-lock.json` 均为 `0.1.5`
+
+## 5. 验证
+
+### 5.1 自动化
 
 | 检查     | 命令                   | 结果      |
 | -------- | ---------------------- | --------- |
@@ -68,56 +66,50 @@ v0.1.4 按 [Figma Make 原型（Version 26）](https://www.figma.com/make/zpog9l
 | 单元测试 | `npm test`             | 22 passed |
 | 移动 E2E | `npm run test:e2e`     | 15 passed |
 
-E2E 覆盖：品牌头部与种子数据、双视图切换、设置页与通知开关、隐私展开、长按删除保护、详情打开/关闭、新增/编辑/删除、400ms 长按清洁、历史撤销、重载持久化、备份复制/下载/恢复、空状态、跨午夜刷新、360 × 740 无横向滚动。
+### 5.2 Android
 
-### 6.2 Android
+- 环境：Android 13 / API 33 x86_64 模拟器，1080 × 2400。
+- 卸载旧包后全新安装 0.1.5 APK，桌面图标显示单颗 3D 水泡，不再是旧三水泡。
+- 启动画面与桌面图标均已截图归档；`dumpsys` 确认 versionCode `6`、versionName `0.1.5`。
+- 首页、列表、设置、详情、编辑、历史、备份与删除确认沿用 v0.1.4 验收路径，无回归。
 
-- 环境：Android 13 / API 33 x86_64 模拟器，1080 × 2400，WebView 109。
-- 安装：卸载旧 debug 签名包后全新安装 `app-debug.apk`，`dumpsys` 确认 versionCode `5`、versionName `0.1.4`。
-- 核对：首页、列表、设置、详情、编辑、备份、历史与删除确认均通过 WebView CDP 实际点击并截图。
-- 兼容：`color-mix()` 移除后，中心 Kitchen counter 与外围 Bedsheets / Floors / Bathroom / Fridge 的水泡底色均正常，没有出现白字白底。
+### 5.3 iOS
 
-### 6.3 iOS
+- GitHub Actions macOS 15 runner 构建未签名 IPA 与模拟器 App。
+- 构建阶段由 `actool` 编译 `AppIcon.appiconset` 与 `Splash.imageset`，资源缺失会直接失败；CI 产物通过即说明新图标/启动图被正确打包。
+- 本地为 Windows，无法在真机安装；真机签名步骤见 `docs/ACCEPTANCE.md`。
 
-- GitHub Actions macOS 15 runner 构建 Debug 模拟器 App，在 iPhone 16 Pro 模拟器完成安装与启动，并截图核对首页；CI artifact 已归档。
-- 首轮 iOS 截图暴露两个安全区问题：无刘海时的固定 `top: 88px` 会让玻璃卡片压住品牌图标；Fridge 的 `29 days left` 在 9px 字号下换行。已分别改为 `max(88px, calc(env(safe-area-inset-top) + 60px))` 与水泡副文本 `white-space: nowrap`，复跑 CI 后截图确认修复。
-- 本地无 macOS，真机安装仍需用户自己的 Apple 签名；具体步骤见 `docs/ACCEPTANCE.md`。
+### 5.4 视觉证据
 
-### 6.4 视觉证据
+- 最新 Make 源图标与本地生成图标对照：`docs/screenshots/android-launcher-icon.png`
+- Android 启动画面：`docs/screenshots/android-splash.png`
+- Web 首页（新 256 图标）：`docs/screenshots/web-home.png`
 
-- Web 首页、列表、设置、详情、编辑、历史、备份：`docs/screenshots/web-*.png`
-- Android 首页、列表、设置、详情、编辑、历史、备份、删除确认：`docs/screenshots/native-android-*.png`
-- iOS 模拟器首页：`docs/screenshots/ios-simulator-home.png`
+## 6. 版本与产物
 
-## 7. 版本与产物
+- GitHub Release：[v0.1.5](https://github.com/Phanstal/Rinse/releases/tag/v0.1.5)
+- 发布工作流：以 tag 触发的 `.github/workflows/release.yml`
 
-- 应用版本：0.1.4
-- Android：versionCode 5 / versionName 0.1.4
-- iOS：build 5 / version 0.1.4
-- GitHub Release：[v0.1.4](https://github.com/Phanstal/Rinse/releases/tag/v0.1.4)（[release run 41440405316](https://github.com/Phanstal/Rinse/actions/runs/41440405316)）
-- 发布文件：
-
-| 文件                            | 大小（字节） | SHA-256                                                            |
-| ------------------------------- | ------------ | ------------------------------------------------------------------ |
-| `Rinse-0.1.4-android-debug.apk` | 5,286,987    | `eef67a303e7441054edf6c8bbb0b92edb6a25aec5a9ae1c9fb282274a0f6ed8d` |
-| `Rinse-0.1.4-ios-unsigned.ipa`  | 1,734,693    | `9b54abdc840b1e92333083fcd83ac5aba1171938a9db608acffb06b44962fd55` |
-| `Rinse-0.1.4-ios-simulator.zip` | 2,258,166    | `f633e57149881b52d415a658cad927017205fc907cf0af34fd9b45555b0e5970` |
+| 文件                            | 大小（字节） | SHA-256    |
+| ------------------------------- | ------------ | ---------- |
+| `Rinse-0.1.5-android-debug.apk` | 发布后回填   | 发布后回填 |
+| `Rinse-0.1.5-ios-unsigned.ipa`  | 发布后回填   | 发布后回填 |
+| `Rinse-0.1.5-ios-simulator.zip` | 发布后回填   | 发布后回填 |
 
 校验方式：`sha256sum -c SHA256SUMS.txt`。
 
-发布验证：从 GitHub Release 重新下载三个产物后，SHA-256 与 `SHA256SUMS.txt` 全部一致；APK 在 API 33 模拟器卸载后全新安装，`aapt` / `dumpsys` 确认 versionCode 5、versionName 0.1.4，并用该 Release APK 重拍全部 Android 截图。IPA 与模拟器包均已解包核对 Bundle ID、版本与架构。
+## 7. 已知限制
 
-## 8. 已知限制
-
-- 无账号、云同步、通知；数据只在本机，跨设备迁移依赖 JSON 备份。
-- Android APK 为 debug 签名，不适合直接上架 Google Play。
-- iOS 只提供未签名 IPA 与模拟器包，真机安装需要自己的 Apple 签名。
-- 水泡视图只有 9 个有机位置；项目超过 9 个时会复用位置，可能出现重叠，列表可完整查看全部项目。
+- 无账号、云同步与推送通知；数据只在本机，跨设备迁移依赖 JSON 备份。
+- Android APK 仍是 debug 签名，不适合直接上架 Google Play。
+- iOS 只提供未签名 IPA 与模拟器包，真机安装需要用户自己的 Apple 签名。
+- 水泡视图只有 9 个有机位置；超过 9 个项目会复用位置，列表仍可完整查看。
 - Android WebView 109 上原生面板禁用滑入动画，这是规避渲染残影的兼容取舍。
 
-## 9. 相关文档
+## 8. 相关文档
 
 - [README](README.md)
 - [真机验收清单](docs/ACCEPTANCE.md)
 - [发布说明](docs/RELEASE_NOTES.md)
-- [GitHub Release v0.1.4](https://github.com/Phanstal/Rinse/releases/tag/v0.1.4)
+- [v0.1.4 报告](https://github.com/Phanstal/Rinse/blob/v0.1.4/REPORT.md)
+- [GitHub Release v0.1.5](https://github.com/Phanstal/Rinse/releases/tag/v0.1.5)

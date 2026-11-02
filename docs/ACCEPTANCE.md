@@ -2,7 +2,7 @@
 
 ## 验收范围
 
-本清单覆盖 Android、iOS 和 Web 三个运行面。v0.1.4 已在本地 API 33 模拟器完成一轮验收；iOS 模拟器由 GitHub Actions 的 macOS 15 runner 构建并启动，本地没有 macOS，因此 iOS 真机安装仍需在 Mac 上补充验证。
+本清单覆盖 Android、iOS 和 Web 三个运行面。v0.1.5 在本地 API 33 模拟器完成品牌资产与核心流程验收；iOS 模拟器由 GitHub Actions 的 macOS 15 runner 构建，本地没有 macOS，因此 iOS 真机安装仍需在 Mac 上补充验证。
 
 验收目标不是只看「能打开」，而是同时确认：
 
@@ -18,12 +18,19 @@
 | Android  | Android 13 / API 33 x86_64 模拟器，1080 × 2400 | GitHub Actions Ubuntu + JDK 17 + Android SDK                           |
 | iOS      | 未在本地运行（Windows 无 Xcode）               | GitHub Actions macOS 15：模拟器构建与启动；设备未签名包由 release 构建 |
 | Web      | Edge / Chromium，390 × 844 和 360 × 740        | GitHub Actions Chromium 移动端 E2E                                     |
-| 应用版本 | 0.1.4（versionCode 5 / build 5）               | 同左                                                                   |
+| 应用版本 | 0.1.5（versionCode 6 / build 6）               | 同左                                                                   |
 | 日期     | 2026-11-02                                     | 以 release workflow 实际运行日期为准                                   |
 
 ## Android 验收步骤
 
 安装 debug APK 后，按顺序执行。
+
+### A0 品牌资产
+
+- 桌面图标应为浅蓝圆角底 + 单颗 3D 玻璃水泡，不再是旧的三水泡插画；圆形图标与自适应图标也应是同一图案。
+- 冷启动画面应为浅色底、居中新图标与 `rinse` 字标；横屏、深色模式启动图同样不应回退到旧图标。
+- 设置 → 应用信息中确认 versionName 为 `0.1.5`，versionCode 为 `6`。
+- 以上截图见 `docs/screenshots/android-launcher-icon.png` 与 `docs/screenshots/android-splash.png`。
 
 ### A1 冷启动与首页
 
@@ -119,7 +126,7 @@
 
 ### I1 模拟器运行
 
-- 下载 `Rinse-0.1.4-ios-simulator.zip`，解压得到 `App.app`。
+- 下载 `Rinse-0.1.5-ios-simulator.zip`，解压得到 `App.app`。
 - 打开 Xcode Simulator，把 `App.app` 拖入模拟器；或从源码运行：
 
 ```bash
@@ -139,7 +146,7 @@ open App.xcworkspace
 - 在 Xcode 打开 `ios/App/App.xcworkspace`。
 - 选择 App target → Signing & Capabilities，选择自己的 Team，修改唯一 Bundle Identifier。
 - 连接 iPhone，选择设备 Run。
-- 或者用 Sideloadly / AltStore 重签 `Rinse-0.1.4-ios-unsigned.ipa`。
+- 或者用 Sideloadly / AltStore 重签 `Rinse-0.1.5-ios-unsigned.ipa`。
 - 检查启动图、状态栏、安全区、触感反馈与本地持久化。
 - 杀进程后重新打开，数据仍在。
 
@@ -181,6 +188,17 @@ open App.xcworkspace
 - [ ] 真机验收记录补充到本文件。
 
 ## 发布记录
+
+### v0.1.5
+
+- Release：[v0.1.5](https://github.com/Phanstal/Rinse/releases/tag/v0.1.5)
+- Release workflow：发布后回填 run 链接
+- 主题：通过 Figma MCP 复核最新 Make 源，确认 `App.tsx` / `index.css` 与 v0.1.4 基线一致；将最新单颗 3D 玻璃水泡图标同步到 Android / iOS / PWA。
+- APK：发布后回填大小、SHA-256 与 `aapt` 版本确认。
+- iOS IPA：发布后回填大小、SHA-256、Bundle 版本与架构。
+- iOS 模拟器 zip：发布后回填大小、SHA-256 与架构。
+- 自动化：lint / 格式 / 类型 / 22 单元测试 / 15 移动端 E2E 全部通过。
+- 视觉验收：Android 桌面图标、圆形图标、自适应图标、启动画面均为新图标；Web 头部、favicon 与 PWA 图标同步。
 
 ### v0.1.4
 
