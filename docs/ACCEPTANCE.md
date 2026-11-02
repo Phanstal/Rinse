@@ -216,4 +216,3 @@ open App.xcworkspace
 - iOS IPA：解包确认包含 `Payload/App.app/App`、`Info.plist`、Bundle ID `com.phanstal.rinse`、版本 `0.1.1 (2)`、arm64 架构；未签名，需重签。
 - iOS 模拟器 zip：解包确认包含 `App.app`，同时包含 x86_64 与 arm64 架构；CI 已安装并在 iPhone 15 Pro 模拟器启动截图。
 - 本版修正：iOS 与 Web 上深色紧急水泡被 `color-mix` 冲淡；现在紧急水泡保持原型的深蓝层次。
-

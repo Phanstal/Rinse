@@ -985,7 +985,7 @@ h1 {
 .home-card {
   position: absolute;
   z-index: 2;
-  top: 88px;
+  top: max(88px, calc(env(safe-area-inset-top) + 60px));
   right: 16px;
   bottom: 86px;
   left: 16px;

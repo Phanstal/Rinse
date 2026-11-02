@@ -115,4 +115,3 @@ E2E 覆盖：品牌头部与种子数据、双视图切换、设置页与通知�
 - [真机验收清单](docs/ACCEPTANCE.md)
 - [发布说明](docs/RELEASE_NOTES.md)
 - [GitHub Release v0.1.4](https://github.com/Phanstal/Rinse/releases/tag/v0.1.4)
-
