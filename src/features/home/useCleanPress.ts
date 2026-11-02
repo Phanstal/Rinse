@@ -3,9 +3,9 @@ import type { CleaningItem } from '../../domain/types';
 import { bubbleHaptic, playBubblePop } from '../../platform/feedback';
 
 /**
- * Shared long-press-to-clean and tap-to-open behaviour for the bubble and
- * grid views. A quick tap still opens the detail sheet; holding for 650 ms
- * resets the cycle without opening anything.
+ * Shared long-press-to-clean and tap-to-open behaviour for the bubble
+ * field. A quick tap still opens the detail sheet; holding for 400 ms resets
+ * the cycle without opening anything.
  */
 export function useCleanPress(onOpen: (itemId: string) => void, onClean: (itemId: string) => void) {
   const [pressingId, setPressingId] = useState<string | null>(null);
@@ -39,7 +39,7 @@ export function useCleanPress(onOpen: (itemId: string) => void, onClean: (itemId
       onClean(item.id);
       setPressingId(null);
       pressTimer.current = null;
-    }, 650);
+    }, 400);
   }
 
   function endPress() {

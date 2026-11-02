@@ -44,10 +44,10 @@ export function DetailSheet({ item, now, onClose, onClean, onEdit, onDelete }: D
         Mark as cleaned
       </button>
       <div className="secondary-actions">
-        <button type="button" onClick={onEdit}>
+        <button type="button" className="button" onClick={onEdit}>
           Edit
         </button>
-        <button type="button" className="delete-button" onClick={onDelete}>
+        <button type="button" className="button delete-button" onClick={onDelete}>
           Delete
         </button>
       </div>

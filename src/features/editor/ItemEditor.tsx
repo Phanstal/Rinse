@@ -75,7 +75,7 @@ export function ItemEditor({ item, onClose, onSave }: ItemEditorProps) {
               <button
                 key={days}
                 type="button"
-                className={form.interval === days ? 'active' : ''}
+                className={`button ${form.interval === days ? 'active' : ''}`}
                 onClick={() => {
                   setForm({ ...form, interval: days });
                   setError(null);

@@ -7,8 +7,19 @@ import { HomeView } from '../features/home/HomeView';
 import { DetailSheet } from '../features/detail/DetailSheet';
 import { ItemEditor } from '../features/editor/ItemEditor';
 import { HistoryPage } from '../features/history/HistoryPage';
+import { SettingsPage } from '../features/settings/SettingsPage';
 import { DataSheet } from '../features/data/DataSheet';
 import { useNow } from './useNow';
+
+const NOTIFICATIONS_KEY = 'rinse.notifications.v1';
+
+function initialNotifications(): boolean {
+  try {
+    return localStorage.getItem(NOTIFICATIONS_KEY) !== 'false';
+  } catch {
+    return true;
+  }
+}
 
 export function App() {
   const store = useRinse();
@@ -17,6 +28,7 @@ export function App() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editing, setEditing] = useState<'new' | string | null>(null);
   const [dataOpen, setDataOpen] = useState(false);
+  const [notifications, setNotifications] = useState(initialNotifications);
   const [toast, setToast] = useState('');
   const now = useNow();
   const toastTimer = useRef<number | null>(null);
@@ -43,6 +55,14 @@ export function App() {
   }, []);
 
   useEffect(() => {
+    try {
+      localStorage.setItem(NOTIFICATIONS_KEY, String(notifications));
+    } catch {
+      // The preference is best-effort when storage is unavailable.
+    }
+  }, [notifications]);
+
+  useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
     let cancelled = false;
     let remove: (() => Promise<void>) | undefined;
@@ -60,7 +80,7 @@ export function App() {
         setSelectedId(null);
         return;
       }
-      if (current.view === 'history') {
+      if (current.view === 'history' || current.view === 'settings') {
         setView('home');
         return;
       }
@@ -131,6 +151,21 @@ export function App() {
     setView('history');
   }
 
+  function openSettings() {
+    setSelectedId(null);
+    setEditing(null);
+    setView('settings');
+  }
+
+  function deleteAllData() {
+    store.replace({ items: [], history: [] });
+    setSelectedId(null);
+    setEditing(null);
+    setDataOpen(false);
+    setView('home');
+    showToast('All cleaning data deleted');
+  }
+
   if (!store.ready) {
     return (
       <div className="app-shell boot-shell">
@@ -151,6 +186,13 @@ export function App() {
           entries={store.data.history}
           onBack={() => setView('home')}
           onUndo={(entry) => undoCleaning(entry.id)}
+        />
+      ) : view === 'settings' ? (
+        <SettingsPage
+          notifications={notifications}
+          onNotificationsChange={setNotifications}
+          onBack={() => setView('home')}
+          onDeleteData={deleteAllData}
           onOpenData={() => setDataOpen(true)}
         />
       ) : (
@@ -162,6 +204,7 @@ export function App() {
           onOpenItem={openItem}
           onCleanItem={cleanItem}
           onOpenHistory={openHistory}
+          onOpenSettings={openSettings}
           onAdd={openAdd}
         />
       )}

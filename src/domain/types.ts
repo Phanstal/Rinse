@@ -28,5 +28,5 @@ export interface ItemDraft {
   lastCleaned: string;
 }
 
-export type HomeMode = 'bubbles' | 'grid' | 'list';
-export type AppView = 'home' | 'history';
+export type HomeMode = 'bubbles' | 'list';
+export type AppView = 'home' | 'history' | 'settings';

@@ -2,7 +2,18 @@ import { expect, test } from '@playwright/test';
 
 async function openHome(page: import('@playwright/test').Page) {
   await page.goto('/');
-  await expect(page.getByText('3 areas ready for care')).toBeVisible();
+  await expect(page.locator('.bubble')).toHaveCount(8);
+}
+
+async function openSettings(page: import('@playwright/test').Page) {
+  await page.getByRole('button', { name: 'Settings' }).click();
+  await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible();
+}
+
+async function openBackup(page: import('@playwright/test').Page) {
+  await openSettings(page);
+  await page.getByRole('button', { name: /Backup & restore/ }).click();
+  await expect(page.getByRole('dialog', { name: 'Backup and restore' })).toBeVisible();
 }
 
 async function openList(page: import('@playwright/test').Page) {
@@ -10,9 +21,9 @@ async function openList(page: import('@playwright/test').Page) {
   await expect(page.locator('.home-list .history-item-button').first()).toBeVisible();
 }
 
-test('shows the seeded home with bubbles, summary and controls', async ({ page }) => {
+test('shows the seeded home with bubbles and controls', async ({ page }) => {
   await openHome(page);
-  await expect(page.getByRole('heading', { name: 'Your home, at a glance.' })).toBeVisible();
+  await expect(page.locator('.wordmark')).toHaveText('rinse');
   await expect(page.locator('.bubble')).toHaveCount(8);
   await expect(page.getByText('Press and hold a bubble when it’s clean')).toBeVisible();
   await expect(page.getByRole('tab', { name: 'Bubble view' })).toHaveAttribute(
@@ -21,9 +32,10 @@ test('shows the seeded home with bubbles, summary and controls', async ({ page }
   );
   await expect(page.getByRole('button', { name: 'Add cleaning item' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Cleaning history' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Settings' })).toBeVisible();
 });
 
-test('switches between the bubble, grid and full list views', async ({ page }) => {
+test('switches between the bubble and full list views', async ({ page }) => {
   await openHome(page);
   await openList(page);
   await expect(page.locator('.home-list .history-item-button')).toHaveCount(8);
@@ -38,10 +50,6 @@ test('switches between the bubble, grid and full list views', async ({ page }) =
       .filter({ hasText: 'Fridge' })
       .locator('.list-days'),
   ).toHaveText('29 days left');
-
-  await page.getByRole('tab', { name: 'Grid view' }).click();
-  await expect(page.locator('.ordered-grid .grid-item')).toHaveCount(8);
-  await expect(page.locator('.grid-item').first()).toContainText('Kitchen counter');
 
   await page.getByRole('tab', { name: 'Bubble view' }).click();
   await expect(page.locator('.bubble')).toHaveCount(8);
@@ -102,7 +110,6 @@ test('marks a cycle as cleaned, logs it and undoes it', async ({ page }) => {
   await page.getByRole('button', { name: 'Kitchen counter, Overdue' }).click();
   await page.getByRole('button', { name: 'Mark as cleaned' }).click();
   await expect(page.getByText('Cycle reset')).toBeVisible();
-  await expect(page.getByText('2 areas ready for care')).toBeVisible();
 
   await page.getByRole('button', { name: 'Cleaning history' }).click();
   await expect(page.getByRole('heading', { name: 'Cleaning log' })).toBeVisible();
@@ -112,7 +119,7 @@ test('marks a cycle as cleaned, logs it and undoes it', async ({ page }) => {
   await expect(page.getByText('Cleaning undone')).toBeVisible();
   await expect(page.getByText('No cleaning history yet.')).toBeVisible();
   await page.getByRole('button', { name: 'Back to home' }).click();
-  await expect(page.getByText('3 areas ready for care')).toBeVisible();
+  await expect(page.locator('.bubble')).toHaveCount(8);
 });
 
 test('cleans a bubble with a long press and adds it to the log', async ({ page }) => {
@@ -122,12 +129,11 @@ test('cleans a bubble with a long press and adds it to the log', async ({ page }
   expect(box).not.toBeNull();
   await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
   await page.mouse.down();
-  await page.waitForTimeout(850);
+  await page.waitForTimeout(600);
   await page.mouse.up();
 
   await expect(page.getByText('Cycle reset')).toBeVisible();
   await expect(page.getByRole('dialog')).toBeHidden();
-  await expect(page.getByText('2 areas ready for care')).toBeVisible();
   await page.getByRole('button', { name: 'Cleaning history' }).click();
   await expect(page.locator('.history-row').filter({ hasText: 'Kitchen counter' })).toBeVisible();
 });
@@ -152,7 +158,7 @@ test('keeps items and history across a reload', async ({ page }) => {
   await expect(page.getByText('Item added')).toBeVisible();
   await page.waitForTimeout(800);
   await page.reload();
-  await expect(page.getByText('3 areas ready for care')).toBeVisible();
+  await expect(page.locator('.bubble')).toHaveCount(9);
 
   await openList(page);
   await expect(page.locator('.history-item-button').filter({ hasText: 'Hallway' })).toBeVisible();
@@ -171,13 +177,11 @@ test('shows the empty state and can add the first item', async ({ page }) => {
   await dialog.getByRole('button', { name: 'Save item' }).click();
   await expect(page.getByText('Item added')).toBeVisible();
   await expect(page.locator('.bubble')).toHaveCount(1);
-  await expect(page.getByText('No areas ready for care')).toBeVisible();
 });
 
 test('exports a summary and restores a pasted backup', async ({ page }) => {
   await openHome(page);
-  await page.getByRole('button', { name: 'Cleaning history' }).click();
-  await page.getByRole('button', { name: 'Backup and restore' }).click();
+  await openBackup(page);
 
   const dataDialog = page.getByRole('dialog', { name: 'Backup and restore' });
   await expect(dataDialog.locator('.backup-stats strong').first()).toHaveText('8');
@@ -204,8 +208,7 @@ test('exports a summary and restores a pasted backup', async ({ page }) => {
 
 test('downloads a portable backup file', async ({ page }) => {
   await openHome(page);
-  await page.getByRole('button', { name: 'Cleaning history' }).click();
-  await page.getByRole('button', { name: 'Backup and restore' }).click();
+  await openBackup(page);
 
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Download .json' }).click();
@@ -223,7 +226,7 @@ test('downloads a portable backup file', async ({ page }) => {
 test('refreshes relative dates after the local midnight', async ({ page }) => {
   await page.clock.install({ time: new Date(2026, 9, 27, 23, 59, 30) });
   await page.goto('/');
-  await expect(page.getByText('3 areas ready for care')).toBeVisible();
+  await expect(page.locator('.bubble')).toHaveCount(8);
   await page.getByRole('tab', { name: 'List view' }).click();
   const kitchenDays = page
     .locator('.home-list .history-item-button')
@@ -235,10 +238,40 @@ test('refreshes relative dates after the local midnight', async ({ page }) => {
   await expect(kitchenDays).toHaveText('3d overdue');
 });
 
+test('opens settings, toggles notifications and protects destructive deletion', async ({
+  page,
+}) => {
+  await openHome(page);
+  await openSettings(page);
+
+  const notifications = page.getByRole('switch', { name: 'Toggle notifications' });
+  await expect(notifications).toHaveAttribute('aria-checked', 'true');
+  await notifications.click();
+  await expect(notifications).toHaveAttribute('aria-checked', 'false');
+
+  await page.getByRole('button', { name: /Privacy/ }).click();
+  await expect(
+    page.getByText(/stores cleaning items, preferences, and history locally/),
+  ).toBeVisible();
+
+  await page.getByRole('button', { name: 'Delete cleaning data' }).click();
+  await expect(page.getByText(/This removes every item and cleaning log entry/)).toBeVisible();
+  const hold = page.getByRole('button', { name: 'Hold to permanently delete' });
+  const box = await hold.boundingBox();
+  expect(box).not.toBeNull();
+  await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
+  await page.mouse.down();
+  await page.waitForTimeout(1400);
+  await page.mouse.up();
+
+  await expect(page.getByText('All cleaning data deleted')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Start with one small thing.' })).toBeVisible();
+});
+
 test('fits a 360 × 740 Android viewport without horizontal scrolling', async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 740 });
   await page.goto('/');
-  await expect(page.getByText('3 areas ready for care')).toBeVisible();
+  await expect(page.locator('.bubble')).toHaveCount(8);
   await expect(page.getByRole('button', { name: 'Add cleaning item' })).toBeVisible();
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth - window.innerWidth,

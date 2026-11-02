@@ -6,11 +6,9 @@ import {
   remainingCopy,
   sortItems,
   statusFor,
-  summaryCopy,
   visibleItems,
 } from '../../domain/rinse';
 import { BubbleField } from './BubbleField';
-import { GridView } from './GridView';
 import { Icon } from '../../components/Icon';
 
 interface HomeViewProps {
@@ -21,12 +19,12 @@ interface HomeViewProps {
   onOpenItem: (itemId: string) => void;
   onCleanItem: (itemId: string) => void;
   onOpenHistory: () => void;
+  onOpenSettings: () => void;
   onAdd: () => void;
 }
 
 const VIEWS: { mode: HomeMode; label: string; ariaLabel: string }[] = [
   { mode: 'bubbles', label: 'Bubbles', ariaLabel: 'Bubble view' },
-  { mode: 'grid', label: 'Grid', ariaLabel: 'Grid view' },
   { mode: 'list', label: 'List', ariaLabel: 'List view' },
 ];
 
@@ -38,6 +36,7 @@ export function HomeView({
   onOpenItem,
   onCleanItem,
   onOpenHistory,
+  onOpenSettings,
   onAdd,
 }: HomeViewProps) {
   const ranked = sortItems(items, now);
@@ -46,19 +45,28 @@ export function HomeView({
   return (
     <>
       <header className="header">
-        <div>
+        <div className="brand-lockup">
+          <img src="/rinse-icon.png" alt="" />
           <p className="wordmark">rinse</p>
-          <h1>Your home, at a glance.</h1>
-          <p className="summary">{summaryCopy(items, now)}</p>
         </div>
-        <button
-          type="button"
-          className="button icon-button subtle-button"
-          onClick={onOpenHistory}
-          aria-label="Cleaning history"
-        >
-          <Icon name="history" />
-        </button>
+        <div className="header-actions">
+          <button
+            type="button"
+            className="button icon-button subtle-button"
+            onClick={onOpenSettings}
+            aria-label="Settings"
+          >
+            <Icon name="settings" />
+          </button>
+          <button
+            type="button"
+            className="button icon-button subtle-button"
+            onClick={onOpenHistory}
+            aria-label="Cleaning history"
+          >
+            <Icon name="history" />
+          </button>
+        </div>
       </header>
 
       {items.length === 0 ? (
@@ -81,7 +89,7 @@ export function HomeView({
                 <button
                   key={view.mode}
                   type="button"
-                  className={mode === view.mode ? 'active' : ''}
+                  className={`button ${mode === view.mode ? 'active' : ''}`}
                   role="tab"
                   aria-selected={mode === view.mode}
                   aria-label={view.ariaLabel}
@@ -94,10 +102,6 @@ export function HomeView({
 
             {mode === 'bubbles' && (
               <BubbleField items={bubbles} now={now} onOpen={onOpenItem} onClean={onCleanItem} />
-            )}
-
-            {mode === 'grid' && (
-              <GridView items={ranked} now={now} onOpen={onOpenItem} onClean={onCleanItem} />
             )}
 
             {mode === 'list' && (

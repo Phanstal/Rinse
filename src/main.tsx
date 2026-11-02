@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Capacitor } from '@capacitor/core';
 import { App } from './app/App';
+import './styles/base.css';
 import './styles/app.css';
 
 const platform = Capacitor.getPlatform();

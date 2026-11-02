@@ -6,10 +6,9 @@ interface HistoryPageProps {
   entries: CleaningHistoryEntry[];
   onBack: () => void;
   onUndo: (entry: CleaningHistoryEntry) => void;
-  onOpenData: () => void;
 }
 
-export function HistoryPage({ entries, onBack, onUndo, onOpenData }: HistoryPageProps) {
+export function HistoryPage({ entries, onBack, onUndo }: HistoryPageProps) {
   return (
     <section className="history-page">
       <div className="history-header">
@@ -21,19 +20,10 @@ export function HistoryPage({ entries, onBack, onUndo, onOpenData }: HistoryPage
         >
           <Icon name="back" />
         </button>
-        <div className="history-title">
+        <div>
           <p className="eyebrow">Activity</p>
           <h1>Cleaning log</h1>
         </div>
-        <button
-          type="button"
-          className="button icon-button history-data"
-          onClick={onOpenData}
-          aria-label="Backup and restore"
-          title="Backup and restore"
-        >
-          <Icon name="archive" />
-        </button>
       </div>
 
       {entries.length ? (

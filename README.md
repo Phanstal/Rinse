@@ -14,9 +14,9 @@
 
 | 平台       | 文件                            | 说明                                           |
 | ---------- | ------------------------------- | ---------------------------------------------- |
-| Android    | `Rinse-0.1.3-android-debug.apk` | 可直接安装的 debug 签名 APK                    |
-| iOS        | `Rinse-0.1.3-ios-unsigned.ipa`  | 未签名 IPA，需要使用自己的 Apple ID 重签后安装 |
-| iOS 模拟器 | `Rinse-0.1.3-ios-simulator.zip` | 需要 macOS + Xcode，解压后拖入模拟器           |
+| Android    | `Rinse-0.1.4-android-debug.apk` | 可直接安装的 debug 签名 APK                    |
+| iOS        | `Rinse-0.1.4-ios-unsigned.ipa`  | 未签名 IPA，需要使用自己的 Apple ID 重签后安装 |
+| iOS 模拟器 | `Rinse-0.1.4-ios-simulator.zip` | 需要 macOS + Xcode，解压后拖入模拟器           |
 | 校验       | `SHA256SUMS.txt`                | 所有发布文件的 SHA-256                         |
 
 ### Android 安装
@@ -39,21 +39,22 @@
 
 ## 功能
 
-- **玻璃首页卡片**：按 Figma Make `Version 26` 重做首页，柔和渐变背景配半透明圆角卡片，底部是悬浮的水泡 / 网格 / 列表三视图切换。
+- **玻璃首页卡片**：按 Figma Make `Version 26` 重做首页，柔和渐变背景配半透明圆角卡片，顶部是品牌标识、设置与历史入口，底部是悬浮的水泡 / 列表双视图切换。
 - **水泡视图**：8 个空间以高低错落的水泡展示；最急的水泡位于中心并更大、更深，其余水泡按紧急度向外扩散。
-- **网格视图**：同样按紧急度排序的圆角方块，两列可滚动；前两个最急项目使用深色底，扫一眼就知道先做哪里。
-- **列表视图**：完整的可滚动清单，显示周期、状态与剩余天数；三视图共享同一份排序与状态颜色。
-- **按住清洁**：按住水泡或网格约 0.65 秒即可完成一次清洁，伴随轻微触感、气泡音效和回弹动画。
-- **点按查看**：轻点水泡或网格打开详情，可查看下次周期、上次清洁时间与重复频率。
+- **列表视图**：完整的可滚动清单，显示周期、状态与剩余天数；双视图共享同一份排序与状态颜色。
+- **按住清洁**：按住水泡约 0.4 秒即可完成一次清洁，伴随轻微触感、气泡音效和回弹动画。
+- **点按查看**：轻点水泡打开详情，可查看下次周期、上次清洁时间与重复频率。
 - **新增 / 编辑**：支持名称、1–365 天周期、上次清洁日期；新增时默认从今天开始。
 - **历史与撤销**：每次清洁都会写入本地日志，可一键撤销，恢复上一次清洁日期。
 - **本地持久化**：Android 使用 SharedPreferences，iOS 使用 UserDefaults，Web 使用 localStorage；刷新或重启应用后数据仍在。
-- **备份与恢复**：在清洁历史右上角打开备份面板，可复制或下载 JSON 备份，也可粘贴备份替换本机数据。
-- **原生手感**：Android 返回键会按「编辑面板 → 备份面板 → 详情 → 历史 → 退出」的顺序逐层返回；适配系统安全区、状态栏与底部手势条。
+- **设置页**：通知开关、隐私说明、备份与恢复入口，以及需要长按确认的「删除全部数据」。
+- **备份与恢复**：在设置中打开备份面板，可复制或下载 JSON 备份，也可粘贴备份替换本机数据。
+- **原生手感**：Android 返回键会按「编辑面板 → 备份面板 → 详情 → 历史 / 设置 → 退出」的顺序逐层返回；适配系统安全区、状态栏与底部手势条。
 - **日期自动刷新**：跨过本地午夜或应用回到前台时，剩余天数、紧急状态和排序会立即重新计算。
 
-![网格视图](docs/screenshots/web-grid.png)
+![水泡视图](docs/screenshots/web-home.png)
 ![列表视图](docs/screenshots/web-list.png)
+![设置页](docs/screenshots/web-settings.png)
 ![详情面板](docs/screenshots/web-detail.png)
 ![新增周期](docs/screenshots/web-editor.png)
 ![清洁历史](docs/screenshots/web-history-filled.png)
@@ -61,23 +62,19 @@
 
 Android 原生运行（本机 API 33 模拟器，1080 × 2400）：
 
-![Android 原生首页](docs/screenshots/native-android-release.png)
-![Android 原生网格视图](docs/screenshots/native-android-grid.png)
+![Android 原生首页](docs/screenshots/native-android-home.png)
 ![Android 原生列表视图](docs/screenshots/native-android-list.png)
+![Android 原生设置页](docs/screenshots/native-android-settings.png)
 ![Android 原生清洁历史](docs/screenshots/native-android-history.png)
 ![Android 原生备份面板](docs/screenshots/native-android-backup.png)
 
-iOS 模拟器运行（GitHub Actions macOS 15，iPhone 16 Pro 模拟器）：
-
-![iOS 模拟器首页](docs/screenshots/ios-simulator-home.png)
-
-三端共用同一套 Web 资源，首页、网格、列表与面板布局一致；真机安装需要用户自己的 Apple 签名。
+iOS 模拟器由 GitHub Actions 的 macOS 15 runner 构建、安装并启动；本地为 Windows，未在真机上运行。三端共用同一套 Web 资源，首页、列表、设置与面板布局一致；真机安装需要用户自己的 Apple 签名。
 
 ## 隐私
 
 - 不创建账号，不连接服务器，不发送分析或崩溃数据。
 - 数据只写入当前设备的应用私有存储。
-- 卸载应用或在系统设置中清除应用数据会删除记录；建议先在清洁历史里导出一份 JSON 备份。
+- 卸载应用或在系统设置中清除应用数据会删除记录；建议先在设置 → 备份与恢复里导出一份 JSON 备份。
 
 ## 开发
 
@@ -156,7 +153,7 @@ open App.xcworkspace
 ## 测试
 
 - `tests/unit`：域名逻辑、日期边界、排序、编辑、清洁/撤销、Preferences 仓库序列化与容错。
-- `tests/e2e`：首页、三视图切换、详情、新增、编辑、按住清洁、历史撤销、删除、刷新持久化、空状态、360 px 窄屏。
+- `tests/e2e`：首页、双视图切换、设置页、详情、新增、编辑、按住清洁、历史撤销、删除、备份、刷新持久化、空状态、360 px 窄屏。
 - CI 同时验证 Web 检查、Android debug APK 构建、iOS 模拟器构建。
 
 ## 目录
@@ -180,10 +177,11 @@ docs/                 发布说明、验收清单、截图
 
 ## 设计来源
 
-界面依据 [Figma Make 原型（Version 26）](https://www.figma.com/make/zpog9lRPWVomLBPYMTKvOp/Rinse-Cleaning-Cycle-Tracker) 复刻，保持了玻璃卡片、水泡布局、三视图切换、配色、文案层级、详情/编辑/历史面板与交互节奏。日期计算使用设备本地日历日，避免跨时区时出现偏移。
+界面依据 [Figma Make 原型（Version 26）](https://www.figma.com/make/zpog9lRPWVomLBPYMTKvOp/Rinse-Cleaning-Cycle-Tracker) 复刻，保持了玻璃卡片、水泡布局、双视图切换、品牌头部、设置与历史页、配色、文案层级、详情/编辑/历史面板与 400ms 长按节奏。日期计算使用设备本地日历日，避免跨时区时出现偏移。
 
 更多文档：[改版报告](REPORT.md) · [真机验收清单](docs/ACCEPTANCE.md) · [发布说明](docs/RELEASE_NOTES.md)
 
 ## License
 
 个人项目，未附带开源许可证；如需复用代码或设计，请先联系作者。
+

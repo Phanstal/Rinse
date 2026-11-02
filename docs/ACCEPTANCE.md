@@ -2,7 +2,7 @@
 
 ## 验收范围
 
-本清单覆盖 Android、iOS 和 Web 三个运行面。v0.1.3 已在本地 API 33 模拟器完成一轮验收；iOS 模拟器由 GitHub Actions 的 macOS 15 runner 构建并启动，本地没有 macOS，因此 iOS 真机安装仍需在 Mac 上补充验证。
+本清单覆盖 Android、iOS 和 Web 三个运行面。v0.1.4 已在本地 API 33 模拟器完成一轮验收；iOS 模拟器由 GitHub Actions 的 macOS 15 runner 构建并启动，本地没有 macOS，因此 iOS 真机安装仍需在 Mac 上补充验证。
 
 验收目标不是只看「能打开」，而是同时确认：
 
@@ -18,7 +18,7 @@
 | Android  | Android 13 / API 33 x86_64 模拟器，1080 × 2400 | GitHub Actions Ubuntu + JDK 17 + Android SDK                           |
 | iOS      | 未在本地运行（Windows 无 Xcode）               | GitHub Actions macOS 15：模拟器构建与启动；设备未签名包由 release 构建 |
 | Web      | Edge / Chromium，390 × 844 和 360 × 740        | GitHub Actions Chromium 移动端 E2E                                     |
-| 应用版本 | 0.1.3（versionCode 4 / build 4）               | 同左                                                                   |
+| 应用版本 | 0.1.4（versionCode 5 / build 5）               | 同左                                                                   |
 | 日期     | 2026-11-02                                     | 以 release workflow 实际运行日期为准                                   |
 
 ## Android 验收步骤
@@ -28,8 +28,8 @@
 ### A1 冷启动与首页
 
 - 清除应用数据后启动，应出现浅色启动画面与 Rinse 水泡图标。
-- 首页标题为「Your home, at a glance.」，摘要为「3 areas ready for care」。
-- 标题下方是一张半透明圆角玻璃卡片；卡片内部是水泡区域、触控提示和 Bubbles / Grid / List 分段切换。
+- 顶部为 `rinse` 品牌图标与字标；右侧是 Settings（齿轮）和 Cleaning history（时钟）两个圆形按钮。
+- 品牌头部下方是一张半透明圆角玻璃卡片；卡片内部是水泡区域、触控提示和 Bubbles / List 双视图分段切换。
 - 8 个水泡全部可见：Kitchen counter、Bathroom、Floors、Bedsheets、Shower、Mirrors、Towels、Fridge。
 - Kitchen counter 水泡位于视觉中心、尺寸最大且为深蓝色，显示「2d overdue」；其余水泡按紧急度向外错落分布并依次变浅。
 - 卡片下方有渐变圆形 `+` 按钮；页面底部不压系统手势条。
@@ -46,7 +46,7 @@
 - 点 `+`，面板标题为「What would you like to care for?」。
 - 点 Item name，软键盘弹出；输入「Native touch」。
 - 点「7 days」预设，间隔输入框变为 7。
-- 隐藏键盘后点 Save item，出现「Item added」提示；水泡、网格或列表中能看到新项目。
+- 隐藏键盘后点 Save item，出现「Item added」提示；水泡或列表中能看到新项目。
 - 编辑面板打开时按 Android 返回键，应先关闭面板而不是退出应用。
 
 ### A4 编辑周期
@@ -58,9 +58,8 @@
 
 ### A5 按住清洁
 
-- 回到首页，按住 Kitchen counter 约 0.8 秒。
+- 回到首页，按住 Kitchen counter 约 0.5 秒。
 - 水泡出现收缩/回弹动画，出现「Cycle reset」提示，伴随短促气泡音。
-- 首页摘要从「3 areas ready for care」变为「2 areas ready for care」。
 - 松手后不应再打开详情面板。
 - 进入历史，能看到 Kitchen counter，日期为今天。
 
@@ -68,16 +67,16 @@
 
 - 在历史页点 Undo。
 - 出现「Cleaning undone」，历史恢复空状态。
-- 返回首页，摘要恢复为「3 areas ready for care」，Kitchen counter 回到「2d overdue」。
+- 返回首页，Kitchen counter 回到「2d overdue」。
 
 ### A7 Android 返回键
 
 依次验证：
 
-1. 备份面板打开时按返回 → 关闭备份面板。
+1. 备份面板打开时按返回 → 关闭备份面板，回到设置页。
 2. 编辑面板打开时按返回 → 关闭编辑面板。
 3. 详情面板打开时按返回 → 关闭详情面板。
-4. 历史页按返回 → 返回首页。
+4. 历史页 / 设置页按返回 → 返回首页。
 5. 首页按返回 → 应用退到后台，不崩溃。
 
 ### A8 重启持久化
@@ -95,15 +94,14 @@
 
 ### A10 三视图与窄屏
 
-- 点底部 Grid，切换为两列圆角网格；前两个项目为深色底，顺序与紧急度一致。
-- 点 List，切换为完整列表；8 行全部可见，最后一行的文字位于触控提示上方，不被提示或分段切换遮住。
-- 点 Bubbles 切回水泡视图，水泡仍可见，选中态与排序不变。
+- 点底部 List，切换为完整列表；8 行按紧急度排列，可滚动查看最后一行。
+- 点 Bubbles 切回水泡视图，水泡仍可见，选中态与排序不变；界面中不再有 Grid 入口。
 - 在 360 × 740 视口下无横向滚动，`+` 按钮不被裁切，列表可滚动查看剩余项目。
 - 应用锁定竖屏；旋转设备不应变成横屏。
 
 ### A11 备份与恢复
 
-- 进入历史页，点右上角备份图标，确认面板显示当前项目数与日志数。
+- 进入设置页，点 Backup & restore，确认面板显示当前项目数与日志数。
 - 点「Copy backup」，粘贴到任意文本编辑器，确认 JSON 包含 `format: "rinse-backup"`、`version: 1`、`data.items` 与 `data.history`。
 - 点「Restore from a backup」，粘贴一份有效备份，点「Check backup」，确认出现条目预览。
 - 点「Replace my data」，出现「Backup restored」，返回首页后水泡数量与备份一致。
@@ -121,7 +119,7 @@
 
 ### I1 模拟器运行
 
-- 下载 `Rinse-0.1.3-ios-simulator.zip`，解压得到 `App.app`。
+- 下载 `Rinse-0.1.4-ios-simulator.zip`，解压得到 `App.app`。
 - 打开 Xcode Simulator，把 `App.app` 拖入模拟器；或从源码运行：
 
 ```bash
@@ -134,14 +132,14 @@ open App.xcworkspace
 
 - 选择任意 iPhone 模拟器 Run。CI 已在 iPhone 16 Pro 模拟器完成安装、启动与截图，截图见 README。
 - 检查：安全区顶部不压状态栏；底部 FAB 不压 Home Indicator；详情/编辑面板可滚动；键盘弹出时编辑表单仍可完成保存。
-- 检查历史、撤销、长按、三视图切换与 Android 一致。
+- 检查历史、撤销、长按、双视图切换与 Android 一致。
 
 ### I2 真机安装（需要签名）
 
 - 在 Xcode 打开 `ios/App/App.xcworkspace`。
 - 选择 App target → Signing & Capabilities，选择自己的 Team，修改唯一 Bundle Identifier。
 - 连接 iPhone，选择设备 Run。
-- 或者用 Sideloadly / AltStore 重签 `Rinse-0.1.3-ios-unsigned.ipa`。
+- 或者用 Sideloadly / AltStore 重签 `Rinse-0.1.4-ios-unsigned.ipa`。
 - 检查启动图、状态栏、安全区、触感反馈与本地持久化。
 - 杀进程后重新打开，数据仍在。
 
@@ -157,15 +155,15 @@ open App.xcworkspace
 - 检查桌面宽度下是否居中显示手机画布；移动端浏览器全屏显示。
 - 浏览器刷新后数据仍在 localStorage。
 - 清除站点数据后回到示例数据。
-- 历史页右上角打开备份面板，复制/下载 JSON；再粘贴恢复，刷新后恢复的数据仍在。
-- 在本地午夜前后停留，三视图中的到期天数与排序会自动跨日更新。
+- 设置 → Backup & restore 打开备份面板，复制/下载 JSON；再粘贴恢复，刷新后恢复的数据仍在。
+- 在本地午夜前后停留，双视图中的到期天数与排序会自动跨日更新。
 
 ## 自动化证据
 
 | 检查        | 命令                      | 结果                                                                                                                            |
 | ----------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | 单元测试    | `npm test`                | 22 passed                                                                                                                       |
-| 移动端 E2E  | `npm run test:e2e`        | 14 passed                                                                                                                       |
+| 移动端 E2E  | `npm run test:e2e`        | 15 passed                                                                                                                       |
 | 类型        | `npm run typecheck`       | passed                                                                                                                          |
 | Lint        | `npm run lint`            | passed                                                                                                                          |
 | 格式        | `npm run format:check`    | passed                                                                                                                          |
@@ -190,8 +188,8 @@ open App.xcworkspace
 - Release workflow：[run 41329179807](https://github.com/Phanstal/Rinse/actions/runs/41329179807)
 - 发布校验：下载 Release 的三个文件后执行 `sha256sum -c SHA256SUMS.txt`，全部 `OK`。
 - APK：`Rinse-0.1.3-android-debug.apk`，5,265,312 字节，SHA-256 `8b8684673f99a7c038b1de882e62bfe7e2181af20af2db3fdec85b65391fee6a`；在 API 33 模拟器上卸载旧 debug 签名包后全新安装，`aapt` 确认包名 `com.phanstal.rinse`、versionCode `4`、versionName `0.1.3`；启动生成 8 条示例数据，首页为新的玻璃卡片与三视图切换。
-- iOS IPA：`Rinse-0.1.3-ios-unsigned.ipa`，1,713,179 字节，SHA-256 `17130352ca6fa61fe065a7c0e5cb404bf5b4f73b3b7704bd02cdf811bb441356`；解包确认包含 `Payload/App.app/App`、Bundle ID `com.phanstal.rinse`、版本 `0.1.3 (4)`、arm64 架构；未签名，需重签。
-- iOS 模拟器 zip：`Rinse-0.1.3-ios-simulator.zip`，2,236,656 字节，SHA-256 `42c36d44df67292c62b6abc81f31e8afd04ef9f7df87269933b8fb52c2159a1b`；解包确认 `App.app`、Bundle ID `com.phanstal.rinse`、版本 `0.1.3 (4)`，同时包含 x86_64 与 arm64 架构；同源模拟器 App 已在 CI 的 iPhone 16 Pro 模拟器安装、启动并截图。
+- iOS IPA：`Rinse-0.1.4-ios-unsigned.ipa`，1,713,179 字节，SHA-256 `17130352ca6fa61fe065a7c0e5cb404bf5b4f73b3b7704bd02cdf811bb441356`；解包确认包含 `Payload/App.app/App`、Bundle ID `com.phanstal.rinse`、版本 `0.1.3 (4)`、arm64 架构；未签名，需重签。
+- iOS 模拟器 zip：`Rinse-0.1.4-ios-simulator.zip`，2,236,656 字节，SHA-256 `42c36d44df67292c62b6abc81f31e8afd04ef9f7df87269933b8fb52c2159a1b`；解包确认 `App.app`、Bundle ID `com.phanstal.rinse`、版本 `0.1.3 (4)`，同时包含 x86_64 与 arm64 架构；同源模拟器 App 已在 CI 的 iPhone 16 Pro 模拟器安装、启动并截图。
 - 视觉验收：Android 1080 × 2400 与 iOS 1206 × 2622 截图均显示玻璃卡片、有机水泡、底部三段切换和渐变 `+`；iOS 卡片避开副标题，短标签不再换行。
 - 兼容验收：Android WebView 109 下网格颜色与文字正常；详情/备份面板无透底残影；列表最后一行位于提示和切换上方。
 - 交互/E2E：22 项单元测试、14 项移动端 E2E 全部通过，覆盖三视图切换、长按清洁、历史撤销、备份恢复、跨午夜刷新与 360 × 740 窄屏。
@@ -218,3 +216,4 @@ open App.xcworkspace
 - iOS IPA：解包确认包含 `Payload/App.app/App`、`Info.plist`、Bundle ID `com.phanstal.rinse`、版本 `0.1.1 (2)`、arm64 架构；未签名，需重签。
 - iOS 模拟器 zip：解包确认包含 `App.app`，同时包含 x86_64 与 arm64 架构；CI 已安装并在 iPhone 15 Pro 模拟器启动截图。
 - 本版修正：iOS 与 Web 上深色紧急水泡被 `color-mix` 冲淡；现在紧急水泡保持原型的深蓝层次。
+
