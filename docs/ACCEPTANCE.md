@@ -175,8 +175,8 @@ open App.xcworkspace
 | Lint        | `npm run lint`            | passed                                                                                                                          |
 | 格式        | `npm run format:check`    | passed                                                                                                                          |
 | Android APK | `./gradlew assembleDebug` | BUILD SUCCESSFUL                                                                                                                |
-| iOS 模拟器  | GitHub Actions macOS 15   | 构建、安装、启动与截图 passed（[CI run](https://github.com/Phanstal/Rinse/actions/runs/41436595141)）                           |
-| CI 全流程   | GitHub Actions            | lint / 格式 / 类型 / 单元 / E2E / APK / iOS 全部 passed（[CI run](https://github.com/Phanstal/Rinse/actions/runs/41436595141)） |
+| iOS 模拟器  | GitHub Actions macOS 14   | 构建、安装、启动与截图 passed（[CI run](https://github.com/Phanstal/Rinse/actions/runs/41481668558)）                           |
+| CI 全流程   | GitHub Actions            | lint / 格式 / 类型 / 单元 / E2E / APK / iOS 全部 passed（[CI run](https://github.com/Phanstal/Rinse/actions/runs/41481668558)） |
 
 ## 发布产物验收
 
@@ -197,7 +197,7 @@ open App.xcworkspace
 - APK：`Rinse-0.1.5-android-debug.apk`，6,783,700 字节，SHA-256 `71fe579642a8c4e88eed08e8cb7b8c91cba50ca339ef2935122f29bd7616d3a9`；`aapt` 确认包名 `com.phanstal.rinse`、versionCode `6`、versionName `0.1.5`；在 API 33 模拟器卸载旧包后全新安装并确认版本。
 - iOS IPA：`Rinse-0.1.5-ios-unsigned.ipa`，4,637,032 字节，SHA-256 `73782a89d2e6e11cafe3c4dbac8ada2579bf5938fb2c1f4bca1653c7d0872e7a`；解包确认 `Payload/App.app/App`、Bundle ID `com.phanstal.rinse`、版本 `0.1.5 (6)`、arm64 单架构；未签名，需重签。
 - iOS 模拟器 zip：`Rinse-0.1.5-ios-simulator.zip`，5,165,606 字节，SHA-256 `944359d6e84c462789dc6e0b79952bcc31d9ca4fe356a69fb4ca7f11d7ce6e1b`；解包确认 `App.app`、Bundle ID `com.phanstal.rinse`、版本 `0.1.5 (6)`，Simulator 可执行文件为 x86_64 + arm64 双架构。
-- 自动化：lint / 格式 / 类型 / 22 单元测试 / 15 移动端 E2E 全部通过（[CI run 41473428266](https://github.com/Phanstal/Rinse/actions/runs/41473428266)）。
+- 自动化：lint / 格式 / 类型 / 22 单元测试 / 15 移动端 E2E 全部通过（[CI run 41481668558](https://github.com/Phanstal/Rinse/actions/runs/41481668558)）。
 - 视觉验收：Android 桌面图标、圆形图标、自适应图标、启动画面均为最新单水泡图标；Web 头部、favicon 与 PWA 图标同步。
 
 ### v0.1.4
