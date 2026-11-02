@@ -88,13 +88,14 @@
 ## 6. 版本与产物
 
 - GitHub Release：[v0.1.5](https://github.com/Phanstal/Rinse/releases/tag/v0.1.5)
-- 发布工作流：以 tag 触发的 `.github/workflows/release.yml`
+- 发布工作流：[release run 41473589506](https://github.com/Phanstal/Rinse/actions/runs/41473589506)
+- 产物已从 Release / Actions artifact 下载并与 `SHA256SUMS.txt` 比对一致。
 
-| 文件                            | 大小（字节） | SHA-256    |
-| ------------------------------- | ------------ | ---------- |
-| `Rinse-0.1.5-android-debug.apk` | 发布后回填   | 发布后回填 |
-| `Rinse-0.1.5-ios-unsigned.ipa`  | 发布后回填   | 发布后回填 |
-| `Rinse-0.1.5-ios-simulator.zip` | 发布后回填   | 发布后回填 |
+| 文件                            | 大小（字节） | SHA-256                                                            |
+| ------------------------------- | ------------ | ------------------------------------------------------------------ |
+| `Rinse-0.1.5-android-debug.apk` | 6,783,700    | `71fe579642a8c4e88eed08e8cb7b8c91cba50ca339ef2935122f29bd7616d3a9` |
+| `Rinse-0.1.5-ios-unsigned.ipa`  | 4,637,032    | `73782a89d2e6e11cafe3c4dbac8ada2579bf5938fb2c1f4bca1653c7d0872e7a` |
+| `Rinse-0.1.5-ios-simulator.zip` | 5,165,606    | `944359d6e84c462789dc6e0b79952bcc31d9ca4fe356a69fb4ca7f11d7ce6e1b` |
 
 校验方式：`sha256sum -c SHA256SUMS.txt`。
 
