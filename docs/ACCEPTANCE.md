@@ -188,8 +188,8 @@ open App.xcworkspace
 - Release workflow：[run 41329179807](https://github.com/Phanstal/Rinse/actions/runs/41329179807)
 - 发布校验：下载 Release 的三个文件后执行 `sha256sum -c SHA256SUMS.txt`，全部 `OK`。
 - APK：`Rinse-0.1.3-android-debug.apk`，5,265,312 字节，SHA-256 `8b8684673f99a7c038b1de882e62bfe7e2181af20af2db3fdec85b65391fee6a`；在 API 33 模拟器上卸载旧 debug 签名包后全新安装，`aapt` 确认包名 `com.phanstal.rinse`、versionCode `4`、versionName `0.1.3`；启动生成 8 条示例数据，首页为新的玻璃卡片与三视图切换。
-- iOS IPA：`Rinse-0.1.4-ios-unsigned.ipa`，1,713,179 字节，SHA-256 `17130352ca6fa61fe065a7c0e5cb404bf5b4f73b3b7704bd02cdf811bb441356`；解包确认包含 `Payload/App.app/App`、Bundle ID `com.phanstal.rinse`、版本 `0.1.3 (4)`、arm64 架构；未签名，需重签。
-- iOS 模拟器 zip：`Rinse-0.1.4-ios-simulator.zip`，2,236,656 字节，SHA-256 `42c36d44df67292c62b6abc81f31e8afd04ef9f7df87269933b8fb52c2159a1b`；解包确认 `App.app`、Bundle ID `com.phanstal.rinse`、版本 `0.1.3 (4)`，同时包含 x86_64 与 arm64 架构；同源模拟器 App 已在 CI 的 iPhone 16 Pro 模拟器安装、启动并截图。
+- iOS IPA：`Rinse-0.1.3-ios-unsigned.ipa`，1,713,179 字节，SHA-256 `17130352ca6fa61fe065a7c0e5cb404bf5b4f73b3b7704bd02cdf811bb441356`；解包确认包含 `Payload/App.app/App`、Bundle ID `com.phanstal.rinse`、版本 `0.1.3 (4)`、arm64 架构；未签名，需重签。
+- iOS 模拟器 zip：`Rinse-0.1.3-ios-simulator.zip`，2,236,656 字节，SHA-256 `42c36d44df67292c62b6abc81f31e8afd04ef9f7df87269933b8fb52c2159a1b`；解包确认 `App.app`、Bundle ID `com.phanstal.rinse`、版本 `0.1.3 (4)`，同时包含 x86_64 与 arm64 架构；同源模拟器 App 已在 CI 的 iPhone 16 Pro 模拟器安装、启动并截图。
 - 视觉验收：Android 1080 × 2400 与 iOS 1206 × 2622 截图均显示玻璃卡片、有机水泡、底部三段切换和渐变 `+`；iOS 卡片避开副标题，短标签不再换行。
 - 兼容验收：Android WebView 109 下网格颜色与文字正常；详情/备份面板无透底残影；列表最后一行位于提示和切换上方。
 - 交互/E2E：22 项单元测试、14 项移动端 E2E 全部通过，覆盖三视图切换、长按清洁、历史撤销、备份恢复、跨午夜刷新与 360 × 740 窄屏。

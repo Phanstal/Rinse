@@ -79,13 +79,15 @@ E2E 覆盖：品牌头部与种子数据、双视图切换、设置页与通知�
 
 ### 6.3 iOS
 
-- release workflow 在 macOS 15 runner 上构建未签名 IPA 与模拟器 zip，并启动 iOS 模拟器截图。
+- GitHub Actions macOS 15 runner 构建 Debug 模拟器 App，在 iPhone 16 Pro 模拟器完成安装与启动，并截图核对首页；CI artifact 已归档。
+- 首轮 iOS 截图暴露两个安全区问题：无刘海时的固定 `top: 88px` 会让玻璃卡片压住品牌图标；Fridge 的 `29 days left` 在 9px 字号下换行。已分别改为 `max(88px, calc(env(safe-area-inset-top) + 60px))` 与水泡副文本 `white-space: nowrap`，复跑 CI 后截图确认修复。
 - 本地无 macOS，真机安装仍需用户自己的 Apple 签名；具体步骤见 `docs/ACCEPTANCE.md`。
 
 ### 6.4 视觉证据
 
 - Web 首页、列表、设置、详情、编辑、历史、备份：`docs/screenshots/web-*.png`
 - Android 首页、列表、设置、详情、编辑、历史、备份、删除确认：`docs/screenshots/native-android-*.png`
+- iOS 模拟器首页：`docs/screenshots/ios-simulator-home.png`
 
 ## 7. 版本与产物
 

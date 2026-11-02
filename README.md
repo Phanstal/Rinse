@@ -68,7 +68,11 @@ Android 原生运行（本机 API 33 模拟器，1080 × 2400）：
 ![Android 原生清洁历史](docs/screenshots/native-android-history.png)
 ![Android 原生备份面板](docs/screenshots/native-android-backup.png)
 
-iOS 模拟器由 GitHub Actions 的 macOS 15 runner 构建、安装并启动；本地为 Windows，未在真机上运行。三端共用同一套 Web 资源，首页、列表、设置与面板布局一致；真机安装需要用户自己的 Apple 签名。
+iOS 模拟器运行（GitHub Actions macOS 15，iPhone 16 Pro 模拟器）：
+
+![iOS 模拟器首页](docs/screenshots/ios-simulator-home.png)
+
+三端共用同一套 Web 资源，首页、列表、设置与面板布局一致；真机安装需要用户自己的 Apple 签名。
 
 ## 隐私
 
