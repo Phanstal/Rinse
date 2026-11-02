@@ -94,14 +94,18 @@ E2E 覆盖：品牌头部与种子数据、双视图切换、设置页与通知�
 - 应用版本：0.1.4
 - Android：versionCode 5 / versionName 0.1.4
 - iOS：build 5 / version 0.1.4
-- GitHub Release：`v0.1.4`
-- 文件：
-  - `Rinse-0.1.4-android-debug.apk`
-  - `Rinse-0.1.4-ios-unsigned.ipa`
-  - `Rinse-0.1.4-ios-simulator.zip`
-  - `SHA256SUMS.txt`
+- GitHub Release：[v0.1.4](https://github.com/Phanstal/Rinse/releases/tag/v0.1.4)（[release run 41440405316](https://github.com/Phanstal/Rinse/actions/runs/41440405316)）
+- 发布文件：
 
-校验方式：`sha256sum -c SHA256SUMS.txt`。发布产物的实际大小与 SHA-256 以 Release 与 `docs/ACCEPTANCE.md` 的发布记录为准。
+| 文件                            | 大小（字节） | SHA-256                                                            |
+| ------------------------------- | ------------ | ------------------------------------------------------------------ |
+| `Rinse-0.1.4-android-debug.apk` | 5,286,987    | `eef67a303e7441054edf6c8bbb0b92edb6a25aec5a9ae1c9fb282274a0f6ed8d` |
+| `Rinse-0.1.4-ios-unsigned.ipa`  | 1,734,693    | `9b54abdc840b1e92333083fcd83ac5aba1171938a9db608acffb06b44962fd55` |
+| `Rinse-0.1.4-ios-simulator.zip` | 2,258,166    | `f633e57149881b52d415a658cad927017205fc907cf0af34fd9b45555b0e5970` |
+
+校验方式：`sha256sum -c SHA256SUMS.txt`。
+
+发布验证：从 GitHub Release 重新下载三个产物后，SHA-256 与 `SHA256SUMS.txt` 全部一致；APK 在 API 33 模拟器卸载后全新安装，`aapt` / `dumpsys` 确认 versionCode 5、versionName 0.1.4，并用该 Release APK 重拍全部 Android 截图。IPA 与模拟器包均已解包核对 Bundle ID、版本与架构。
 
 ## 8. 已知限制
 

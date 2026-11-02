@@ -168,8 +168,8 @@ open App.xcworkspace
 | Lint        | `npm run lint`            | passed                                                                                                                          |
 | 格式        | `npm run format:check`    | passed                                                                                                                          |
 | Android APK | `./gradlew assembleDebug` | BUILD SUCCESSFUL                                                                                                                |
-| iOS 模拟器  | GitHub Actions macOS 15   | 构建、安装、启动与截图 passed（[CI run](https://github.com/Phanstal/Rinse/actions/runs/41327984411)）                           |
-| CI 全流程   | GitHub Actions            | lint / 格式 / 类型 / 单元 / E2E / APK / iOS 全部 passed（[CI run](https://github.com/Phanstal/Rinse/actions/runs/41327984411)） |
+| iOS 模拟器  | GitHub Actions macOS 15   | 构建、安装、启动与截图 passed（[CI run](https://github.com/Phanstal/Rinse/actions/runs/41436595141)）                           |
+| CI 全流程   | GitHub Actions            | lint / 格式 / 类型 / 单元 / E2E / APK / iOS 全部 passed（[CI run](https://github.com/Phanstal/Rinse/actions/runs/41436595141)） |
 
 ## 发布产物验收
 
@@ -181,6 +181,18 @@ open App.xcworkspace
 - [ ] 真机验收记录补充到本文件。
 
 ## 发布记录
+
+### v0.1.4
+
+- Release：[v0.1.4](https://github.com/Phanstal/Rinse/releases/tag/v0.1.4)
+- Release workflow：[run 41440405316](https://github.com/Phanstal/Rinse/actions/runs/41440405316)（在 `v0.1.4` tag 上手动触发）
+- 发布校验：下载 Release 的 APK、IPA、模拟器 zip 与 `SHA256SUMS.txt`，三个产物 SHA-256 均与清单一致。
+- APK：`Rinse-0.1.4-android-debug.apk`，5,286,987 字节，SHA-256 `eef67a303e7441054edf6c8bbb0b92edb6a25aec5a9ae1c9fb282274a0f6ed8d`；`aapt` 确认包名 `com.phanstal.rinse`、versionCode `5`、versionName `0.1.4`。因本地调试签名与 CI runner 调试签名不同，先卸载旧包再全新安装；`dumpsys` 确认版本，启动后生成 8 条示例数据，并用该 APK 重拍 Android 截图。
+- iOS IPA：`Rinse-0.1.4-ios-unsigned.ipa`，1,734,693 字节，SHA-256 `9b54abdc840b1e92333083fcd83ac5aba1171938a9db608acffb06b44962fd55`；解包确认 `Payload/App.app/App`、Bundle ID `com.phanstal.rinse`、版本 `0.1.4 (5)`、arm64 单架构；未签名，需重签。
+- iOS 模拟器 zip：`Rinse-0.1.4-ios-simulator.zip`，2,258,166 字节，SHA-256 `f633e57149881b52d415a658cad927017205fc907cf0af34fd9b45555b0e5970`；解包确认 `App.app`、Bundle ID `com.phanstal.rinse`、版本 `0.1.4 (5)`，Simulator 可执行文件为 x86_64 + arm64 双架构；同源模拟器 App 已在 CI 的 iPhone 16 Pro 模拟器安装、启动并截图。
+- 视觉验收：Android 1080 × 2400 与 iOS 1206 × 2622 截图均显示紧凑品牌头部、玻璃卡片、双视图切换与 8 个水泡；iOS 卡片顶部避开安全区，不再压住设置/历史按钮；`29 days left` 等副文本保持单行。
+- 自动化验收：lint / 格式 / 类型 / 22 单元测试 / 15 移动端 E2E 全部通过（[CI run 41436595141](https://github.com/Phanstal/Rinse/actions/runs/41436595141)）。
+- 兼容验收：Android WebView 109 下水泡底色与文字正常；详情/备份面板无透底残影；长按清洁 400ms；设置页删除需长按确认。
 
 ### v0.1.3
 
