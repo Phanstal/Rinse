@@ -1065,6 +1065,10 @@ h1 {
   height: clamp(62px, 18vw, 78px);
   font-size: 10px;
 }
+.home-card .bubble small {
+  font-size: 9px;
+  white-space: nowrap;
+}
 .home-card .bubble-position-0 {
   width: clamp(126px, 34vw, 142px);
   height: clamp(126px, 34vw, 142px);
