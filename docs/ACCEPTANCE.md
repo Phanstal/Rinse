@@ -104,7 +104,7 @@
 
 ### A10 三视图与窄屏
 
-- 点底部 List，切换为完整列表；8 行按紧急度排列，可滚动查看最后一行。
+- 添加至少 8 个项目后点底部 List，切换为完整列表；所有行按紧急度排列，可滚动查看最后一行。
 - 点 Bubbles 切回水泡视图，水泡仍可见，选中态与排序不变；界面中不再有 Grid 入口。
 - 在 360 × 740 视口下无横向滚动，`+` 按钮不被裁切，列表可滚动查看剩余项目。
 - 应用锁定竖屏；旋转设备不应变成横屏。
@@ -186,8 +186,8 @@ open App.xcworkspace
 | Lint        | `npm run lint`            | passed                                                                                                                          |
 | 格式        | `npm run format:check`    | passed                                                                                                                          |
 | Android APK | `./gradlew assembleDebug` | BUILD SUCCESSFUL                                                                                                                |
-| iOS 模拟器  | GitHub Actions macOS 14   | 构建、安装、启动与截图 passed（[CI run](https://github.com/Phanstal/Rinse/actions/runs/41481668558)）                           |
-| CI 全流程   | GitHub Actions            | lint / 格式 / 类型 / 单元 / E2E / APK / iOS 全部 passed（[CI run](https://github.com/Phanstal/Rinse/actions/runs/41481668558)） |
+| iOS 模拟器  | GitHub Actions macOS 14   | 构建、安装、启动与截图 passed（[CI run](https://github.com/Phanstal/Rinse/actions/runs/41970458461)）                           |
+| CI 全流程   | GitHub Actions            | lint / 格式 / 类型 / 单元 / E2E / APK / iOS 全部 passed（[CI run](https://github.com/Phanstal/Rinse/actions/runs/41970458461)） |
 
 ## 发布产物验收
 
@@ -199,6 +199,18 @@ open App.xcworkspace
 - [ ] 真机验收记录补充到本文件。
 
 ## 发布记录
+
+### v0.1.6
+
+- Release：[v0.1.6](https://github.com/Phanstal/Rinse/releases/tag/v0.1.6)
+- Release workflow：[run 41970656551](https://github.com/Phanstal/Rinse/actions/runs/41970656551)，Android / iOS / Publish 全部成功。
+- 发布校验：从 Release 下载 APK、IPA、模拟器 zip 与 `SHA256SUMS.txt`，三个产物 SHA-256 均与清单一致。
+- APK：`Rinse-0.1.6-android-debug.apk`，6,783,991 字节，SHA-256 `676118f0ae8b8f8d632ebdbce79a645a01aff6c664837429754aec91af55a4e4`；`aapt` 确认包名 `com.phanstal.rinse`、versionCode `7`、versionName `0.1.6`，`apksigner` 确认为 Android Debug 证书；在 API 33 模拟器完成首次进入、创建第一颗、加号添加第二颗、列表切换与重启持久化验收。
+- iOS IPA：`Rinse-0.1.6-ios-unsigned.ipa`，4,631,358 字节，SHA-256 `d92062b963ff31ed7aabed618cc304bed44e9b43e8eab8ea675ba5eab4d8752c`；解包确认 `Payload/App.app/App`、Bundle ID `com.phanstal.rinse`、版本 `0.1.6 (7)`、arm64 单架构；未签名，需重签。
+- iOS 模拟器 zip：`Rinse-0.1.6-ios-simulator.zip`，5,164,791 字节，SHA-256 `14c7cdd2f9c9e633e47ac46a63e61707d5539f0716df96c76844b0674c0b153b`；解包确认 `App.app`、Bundle ID `com.phanstal.rinse`、版本 `0.1.6 (7)`，Simulator 可执行文件为 x86_64 + arm64 双架构；CI 已在 iPhone 模拟器完成安装、启动与截图。
+- 迁移验收：在 Android 原生 Preferences 写入 v0.1.5 的 8 条默认示例后重载，首页回到中央创建水泡，存储写回空数组；Web 混合自定义项目时仅清理未触碰的旧示例。
+- 自动化：lint / 格式 / 类型 / 27 单元测试 / 16 移动端 E2E 全部通过（[CI run 41970458461](https://github.com/Phanstal/Rinse/actions/runs/41970458461)）。
+- 视觉验收：Web 与 Android 首次进入均为单颗中央创建水泡、三行提示、无切换/加号/示例；创建第一颗后切换与加号出现。截图见 `docs/screenshots/web-first-run.png` 与 `docs/screenshots/native-android-first-run.png`。
 
 ### v0.1.5
 

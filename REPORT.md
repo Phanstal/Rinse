@@ -98,7 +98,7 @@ const showCreateBubble = !hasCreatedBubble && items.length === 0;
 - 点底部加号添加 `Bathroom`：水泡数 `2`，中心仍是 `Kitchen counter`，切换与加号保持。
 - 切到 List：两行项目均可读；强制停止并重新启动应用，项目与顺序仍在。
 - 通过 Capacitor Preferences 注入 v0.1.5 的 8 条旧示例后重载：首页自动回到中央创建水泡，原生 `rinse.items.v1` 被写回 `[]`，证明迁移在 Android 原生存储上生效。
-- 截图：`docs/screenshots/native-android-first-run.png`、`native-android-home.png`、`native-android-list.png`、`native-android-created.png`。
+- 截图：`docs/screenshots/native-android-first-run.png`、`native-android-home.png`、`native-android-list.png`。
 
 ### 4.3 Web
 
@@ -123,7 +123,22 @@ const showCreateBubble = !hasCreatedBubble && items.length === 0;
 
 ## 6. 发布产物
 
-本版 release 产物在 tag 推送后由 GitHub Actions 生成，下载并校验完成后回填本节。
+- GitHub Release：[v0.1.6](https://github.com/Phanstal/Rinse/releases/tag/v0.1.6)
+- Release workflow：[run 41970656551](https://github.com/Phanstal/Rinse/actions/runs/41970656551)，Android / iOS / Publish 三个 job 全部成功。
+- CI：[run 41970458461](https://github.com/Phanstal/Rinse/actions/runs/41970458461)，Web、Android、iOS 三个 job 全部成功。
+- 已从 Release 下载全部产物并逐项计算 SHA-256，与 `SHA256SUMS.txt` 完全一致。
+
+| 文件                            | 大小（字节） | SHA-256                                                            |
+| ------------------------------- | ------------ | ------------------------------------------------------------------ |
+| `Rinse-0.1.6-android-debug.apk` | 6,783,991    | `676118f0ae8b8f8d632ebdbce79a645a01aff6c664837429754aec91af55a4e4` |
+| `Rinse-0.1.6-ios-unsigned.ipa`  | 4,631,358    | `d92062b963ff31ed7aabed618cc304bed44e9b43e8eab8ea675ba5eab4d8752c` |
+| `Rinse-0.1.6-ios-simulator.zip` | 5,164,791    | `14c7cdd2f9c9e633e47ac46a63e61707d5539f0716df96c76844b0674c0b153b` |
+
+产物校验：
+
+- APK：`aapt` 确认 `com.phanstal.rinse`、versionCode `7`、versionName `0.1.6`；`apksigner` 确认为 Android Debug 证书。
+- IPA：解包 `Payload/App.app/App` 为 arm64，Info.plist 为 `0.1.6 (7)`、Bundle ID `com.phanstal.rinse`、MinimumOSVersion `13.0`；未签名，需重签。
+- 模拟器 zip：`App.app` 的 Info.plist 同为 `0.1.6 (7)`，可执行文件同时包含 x86_64 与 arm64。
 
 ## 7. 已知限制
 

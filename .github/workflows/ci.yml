@@ -180,4 +180,5 @@ jobs:
           path: |
             ${{ runner.temp }}/Rinse-ios-simulator.zip
             ${{ runner.temp }}/Rinse-ios-home.png
+            ${{ runner.temp }}/Rinse-ios-home.png
           retention-days: 14
