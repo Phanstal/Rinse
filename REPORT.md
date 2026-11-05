@@ -113,6 +113,7 @@ const showCreateBubble = !hasCreatedBubble && items.length === 0;
 - 本地为 Windows，无法运行 Xcode Simulator。
 - iOS 构建由 GitHub Actions macOS runner 完成；`ios/App` 版本已同步为 `0.1.6 (7)`，AppIcon / Splash 资源未变。
 - 首次进入与迁移逻辑全部位于共享 Web 资源，iOS 与 Android/Web 使用同一实现；真机安装仍需在 Mac 上补充签名验证。
+- CI run [41972560838](https://github.com/Phanstal/Rinse/actions/runs/41972560838) 在 iPhone 16 Pro 模拟器安装并启动 v0.1.6，上传 `Rinse-ios-home.png`；该截图已更新为 `docs/screenshots/ios-simulator-home.png`，显示与 Web/Android 相同的中央创建水泡首屏。
 
 ## 5. 版本
 

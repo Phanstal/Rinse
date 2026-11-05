@@ -210,7 +210,8 @@ open App.xcworkspace
 - iOS 模拟器 zip：`Rinse-0.1.6-ios-simulator.zip`，5,164,791 字节，SHA-256 `14c7cdd2f9c9e633e47ac46a63e61707d5539f0716df96c76844b0674c0b153b`；解包确认 `App.app`、Bundle ID `com.phanstal.rinse`、版本 `0.1.6 (7)`，Simulator 可执行文件为 x86_64 + arm64 双架构；CI 已在 iPhone 模拟器完成安装、启动与截图。
 - 迁移验收：在 Android 原生 Preferences 写入 v0.1.5 的 8 条默认示例后重载，首页回到中央创建水泡，存储写回空数组；Web 混合自定义项目时仅清理未触碰的旧示例。
 - 自动化：lint / 格式 / 类型 / 27 单元测试 / 16 移动端 E2E 全部通过（[CI run 41970458461](https://github.com/Phanstal/Rinse/actions/runs/41970458461)）。
-- 视觉验收：Web 与 Android 首次进入均为单颗中央创建水泡、三行提示、无切换/加号/示例；创建第一颗后切换与加号出现。截图见 `docs/screenshots/web-first-run.png` 与 `docs/screenshots/native-android-first-run.png`。
+- iOS 截图：CI run [41972560838](https://github.com/Phanstal/Rinse/actions/runs/41972560838) 上传 `ios-artifacts/Rinse-ios-home.png`，已更新为 `docs/screenshots/ios-simulator-home.png`。
+- 视觉验收：Web、Android 与 iOS 首次进入均为单颗中央创建水泡、三行提示、无切换/加号/示例；创建第一颗后切换与加号出现。截图见 `docs/screenshots/web-first-run.png`、`native-android-first-run.png` 与 `ios-simulator-home.png`。
 
 ### v0.1.5
 
