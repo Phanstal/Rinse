@@ -6,6 +6,7 @@ import {
   addItem,
   cleanItem,
   createInitialData,
+  pruneLegacySamples,
   removeItem,
   undoCleaning,
   updateItem,
@@ -36,9 +37,9 @@ export function useRinse(repository?: RinseRepository): RinseStore {
       try {
         const stored = await repositoryRef.current.load();
         if (cancelled) return;
-        const initial = stored ?? createInitialData();
+        const initial = stored ? pruneLegacySamples(stored) : createInitialData();
         setData(initial);
-        if (!stored) await repositoryRef.current.save(initial);
+        if (!stored || initial !== stored) await repositoryRef.current.save(initial);
       } catch {
         if (cancelled) return;
         setError('Rinse could not open its local library. Changes will not be kept.');

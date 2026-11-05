@@ -1,18 +1,17 @@
-# Rinse v0.1.5 发布说明
+# Rinse v0.1.6 发布说明
 
 本地优先清洁周期追踪器，提供 Android、iOS 与 Web 版本。
 
-这一版先通过 Figma MCP 重新抓取 [Figma Make 原型](https://www.figma.com/make/zpog9lRPWVomLBPYMTKvOp/Rinse-Cleaning-Cycle-Tracker) 的最新源码，并与 v0.1.4 基线逐字节比较，确认最新版界面代码（`App.tsx`、`index.css`）没有变化。真正需要补齐的是**品牌资产**：最新 Make 使用单颗 3D 玻璃水泡图标，而 Android / iOS 的桌面图标、启动画面和 PWA 图标此前仍是旧的三水泡插画。v0.1.5 把最新图标同步到全部运行面。
+这一版按 Figma 设计补齐首次进入体验，并按最新 [Figma Make 原型](https://www.figma.com/make/zpog9lRPWVomLBPYMTKvOp/Rinse-Cleaning-Cycle-Tracker) 的交互调整首屏。新安装不再预置示例清洁项目，而是先让用户创建第一颗自己的水泡。
 
 ## 本版更新
 
-- **最新 Make 核对**：最新 `App.tsx` SHA-256 `86AB0DEC…EE42C`、`index.css` SHA-256 `DC96BBEF…F3221`，与 v0.1.4 基线一致，界面布局与交互无需重做。
-- **Web 图标**：头部 256px 品牌图标、favicon、Apple touch icon、PWA 192/512 图标全部换为最新单水泡图标。
-- **PWA manifest**：修正图标路径与 MIME，新增 `public/icons/`，安装到桌面后使用新图标。
-- **Android 桌面图标**：重新生成全部密度 `ic_launcher`、圆形图标、自适应图标前景/背景，统一为最新图标。
-- **Android 启动画面**：全部 26 张横竖屏 / 深浅色 splash 改为新图标 + `rinse` 字标。
-- **iOS**：`AppIcon-512@2x.png` 与 6 张启动图替换为最新图标，保持不透明 App Icon。
-- **版本同步**：Android versionCode 6 / versionName 0.1.5，iOS build 6 / version 0.1.5。
+- **首次进入引导**：新安装只显示中央创建水泡与提示 `Tap to create your first cleaning bubble`；没有 Bubbles / List 切换、没有底部 `+`，也没有示例数据。
+- **首颗水泡**：保存第一个项目后，创建水泡消失，新项目成为中央主水泡；双视图切换与底部加号出现，可继续添加更多空间。
+- **删除后回到引导**：删除最后一个项目或「删除全部数据」后，首页回到中央创建水泡，不会出现没有入口的空屏。
+- **旧示例自动清理**：升级时自动移除 v0.1.5 及更早版本中未被编辑、未被清洁的 8 个默认示例；自定义项目、改过的示例与已有清洁历史保留。
+- **布局对齐**：新增 `Your home, at a glance.` 标题，卡片顶部、中央水泡与底部提示按 Figma 设计稿重新对齐；360 × 740 窄屏也保持三行文案不溢出。
+- **版本同步**：Android versionCode 7 / versionName 0.1.6，iOS build 7 / version 0.1.6。
 
 ## 功能
 
@@ -27,24 +26,24 @@
 
 ## 下载文件
 
-- `Rinse-0.1.5-android-debug.apk` — Android debug 签名 APK，可直接侧载。
-- `Rinse-0.1.5-ios-unsigned.ipa` — iOS 未签名 IPA，需要自行用 Apple ID 重签。
-- `Rinse-0.1.5-ios-simulator.zip` — iOS 模拟器 App，需要 macOS + Xcode。
+- `Rinse-0.1.6-android-debug.apk` — Android debug 签名 APK，可直接侧载。
+- `Rinse-0.1.6-ios-unsigned.ipa` — iOS 未签名 IPA，需要自行用 Apple ID 重签。
+- `Rinse-0.1.6-ios-simulator.zip` — iOS 模拟器 App，需要 macOS + Xcode。
 - `SHA256SUMS.txt` — 校验和。
 
 ## 验证情况
 
-- Web：lint、格式、类型检查、22 项单元测试、15 项移动端 E2E 全部通过。
-- Android：API 33 x86_64 模拟器（1080 × 2400）卸载重装 0.1.5 APK，确认桌面图标为最新的单颗玻璃水泡、启动画面为 `rinse` 字标，核心流程无回归。
-- iOS：GitHub Actions macOS 15 runner 构建设备未签名 IPA 与模拟器 App；资源目录由 Xcode 资源编译器校验并打包。
-- 真实界面代码与最新 Make 一致，本轮不重做布局；详细对比见 `REPORT.md`。
+- Web：lint、格式、类型检查、27 项单元测试、16 项移动端 E2E 全部通过。
+- Android：API 33 x86_64 模拟器（1080 × 2400）卸载重装 0.1.6 APK，验证首次进入、创建第一颗、底部加号添加第二颗、列表切换与重启持久化；通过原生 Preferences 注入旧示例后确认自动清理。
+- iOS：GitHub Actions macOS runner 构建未签名 IPA 与模拟器 App；共享 Web 资源与 Android/Web 一致。
+- 真实界面代码与最新 Make 的首次进入交互一致，布局按 Figma 设计稿对齐；详细对比见 `REPORT.md`。
 
 ## 已知限制
 
 - 暂无云同步、账号或通知；数据只在本机，跨设备迁移需手动复制备份。
+- 旧示例迁移只移除未被触碰过的内置示例；改名、改间隔或清洁过的示例按用户数据处理并保留。
 - Android APK 未使用 release keystore 签名，不适合直接上架 Google Play。
 - iOS 没有 Apple Developer 证书，因此只发布未签名 IPA 与模拟器包；真机安装与运行需要用户自行签名。
-- 水泡视图在项目超过 9 个时会复用同一组有机位置，可能出现水泡重叠；列表可完整滚动查看所有项目。
 
 ## 校验
 
@@ -55,5 +54,5 @@ sha256sum -c SHA256SUMS.txt
 或在 Windows PowerShell 中：
 
 ```powershell
-Get-FileHash .\Rinse-0.1.5-android-debug.apk -Algorithm SHA256
+Get-FileHash .\Rinse-0.1.6-android-debug.apk -Algorithm SHA256
 ```

@@ -1,6 +1,38 @@
 import { expect, test } from '@playwright/test';
 
+const SEED_ITEMS = [
+  { id: 'seed-kitchen', name: 'Kitchen counter', interval: 3, daysAgo: 5 },
+  { id: 'seed-bathroom', name: 'Bathroom', interval: 7, daysAgo: 8 },
+  { id: 'seed-floors', name: 'Floors', interval: 7, daysAgo: 6 },
+  { id: 'seed-bedsheets', name: 'Bedsheets', interval: 14, daysAgo: 10 },
+  { id: 'seed-shower', name: 'Shower', interval: 7, daysAgo: 3 },
+  { id: 'seed-mirrors', name: 'Mirrors', interval: 7, daysAgo: 2 },
+  { id: 'seed-towels', name: 'Towels', interval: 7, daysAgo: 1 },
+  { id: 'seed-fridge', name: 'Fridge', interval: 30, daysAgo: 1 },
+];
+
+async function seedHome(page: import('@playwright/test').Page) {
+  await page.addInitScript((seed) => {
+    const itemsKey = 'CapacitorStorage.rinse.items.v1';
+    if (localStorage.getItem(itemsKey) !== null) return;
+    const dateKey = (daysAgo: number) => {
+      const date = new Date();
+      date.setDate(date.getDate() - daysAgo);
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(
+        date.getDate(),
+      ).padStart(2, '0')}`;
+    };
+    const items = seed.map(({ daysAgo, ...item }) => ({
+      ...item,
+      lastCleaned: dateKey(daysAgo),
+    }));
+    localStorage.setItem(itemsKey, JSON.stringify(items));
+    localStorage.setItem('CapacitorStorage.rinse.history.v1', '[]');
+  }, SEED_ITEMS);
+}
+
 async function openHome(page: import('@playwright/test').Page) {
+  await seedHome(page);
   await page.goto('/');
   await expect(page.locator('.bubble')).toHaveCount(8);
 }
@@ -164,19 +196,72 @@ test('keeps items and history across a reload', async ({ page }) => {
   await expect(page.locator('.history-item-button').filter({ hasText: 'Hallway' })).toBeVisible();
 });
 
-test('shows the empty state and can add the first item', async ({ page }) => {
+test('starts with only the create bubble, then reveals the normal home', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: 'Your home, at a glance.' })).toBeVisible();
+  await expect(page.getByText('Tap to create your first cleaning bubble')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Create a cleaning bubble' })).toBeVisible();
+  await expect(page.locator('.bubble')).toHaveCount(1);
+  await expect(page.getByRole('tab')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Add cleaning item' })).toHaveCount(0);
+  await expect(page.getByText('Kitchen counter')).toHaveCount(0);
+
+  await page.getByRole('button', { name: 'Create a cleaning bubble' }).click();
+  const dialog = page.getByRole('dialog');
+  await dialog.getByPlaceholder('e.g. Kitchen counter').fill('Bedroom');
+  await dialog.getByRole('button', { name: '7 days' }).click();
+  await dialog.getByRole('button', { name: 'Save item' }).click();
+  await expect(page.getByText('Item added')).toBeVisible();
+
+  await expect(page.getByRole('button', { name: 'Create a cleaning bubble' })).toHaveCount(0);
+  await expect(page.getByRole('tab', { name: 'Bubble view' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Add cleaning item' })).toBeVisible();
+  await expect(page.locator('.bubble')).toHaveCount(1);
+  await expect(page.locator('.bubble-position-0')).toContainText('Bedroom');
+  await expect(page.getByText('Tap to create your first cleaning bubble')).toHaveCount(0);
+
+  await page.reload();
+  await expect(page.getByRole('button', { name: 'Create a cleaning bubble' })).toHaveCount(0);
+  await expect(page.getByRole('tab', { name: 'Bubble view' })).toBeVisible();
+  await expect(page.locator('.bubble-position-0')).toContainText('Bedroom');
+});
+
+test('cleans legacy sample data without touching custom cycles', async ({ page }) => {
   await page.addInitScript(() => {
-    localStorage.setItem('CapacitorStorage.rinse.items.v1', '[]');
+    const dateKey = (daysAgo: number) => {
+      const date = new Date();
+      date.setDate(date.getDate() - daysAgo);
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(
+        date.getDate(),
+      ).padStart(2, '0')}`;
+    };
+    localStorage.setItem(
+      'CapacitorStorage.rinse.items.v1',
+      JSON.stringify([
+        { id: 'kitchen', name: 'Kitchen counter', interval: 3, lastCleaned: dateKey(5) },
+        { id: 'bathroom', name: 'Bathroom', interval: 7, lastCleaned: dateKey(8) },
+        { id: 'fridge', name: 'Fridge', interval: 30, lastCleaned: dateKey(1) },
+        { id: 'desk', name: 'Study desk', interval: 7, lastCleaned: dateKey(1) },
+      ]),
+    );
     localStorage.setItem('CapacitorStorage.rinse.history.v1', '[]');
   });
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'Start with one small thing.' })).toBeVisible();
-  await page.getByRole('button', { name: 'Add your first item' }).click();
-  const dialog = page.getByRole('dialog');
-  await dialog.getByPlaceholder('e.g. Kitchen counter').fill('Bedroom');
-  await dialog.getByRole('button', { name: 'Save item' }).click();
-  await expect(page.getByText('Item added')).toBeVisible();
-  await expect(page.locator('.bubble')).toHaveCount(1);
+
+  await expect(page.getByText('Tap to create your first cleaning bubble')).toHaveCount(0);
+  await expect(page.getByText('Kitchen counter')).toHaveCount(0);
+  await expect(page.getByText('Bathroom')).toHaveCount(0);
+  await expect(page.getByText('Fridge')).toHaveCount(0);
+  await expect(page.locator('.bubble-position-0')).toContainText('Study desk');
+  await expect(page.getByRole('tab', { name: 'Bubble view' })).toBeVisible();
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const raw = localStorage.getItem('CapacitorStorage.rinse.items.v1');
+        return raw ? (JSON.parse(raw) as { name: string }[]).map((item) => item.name) : null;
+      }),
+    )
+    .toEqual(['Study desk']);
 });
 
 test('exports a summary and restores a pasted backup', async ({ page }) => {
@@ -225,8 +310,7 @@ test('downloads a portable backup file', async ({ page }) => {
 
 test('refreshes relative dates after the local midnight', async ({ page }) => {
   await page.clock.install({ time: new Date(2026, 9, 27, 23, 59, 30) });
-  await page.goto('/');
-  await expect(page.locator('.bubble')).toHaveCount(8);
+  await openHome(page);
   await page.getByRole('tab', { name: 'List view' }).click();
   const kitchenDays = page
     .locator('.home-list .history-item-button')
@@ -265,13 +349,14 @@ test('opens settings, toggles notifications and protects destructive deletion', 
   await page.mouse.up();
 
   await expect(page.getByText('All cleaning data deleted')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Start with one small thing.' })).toBeVisible();
+  await expect(page.getByText('Tap to create your first cleaning bubble')).toBeVisible();
+  await expect(page.getByRole('tab')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Add cleaning item' })).toHaveCount(0);
 });
 
 test('fits a 360 × 740 Android viewport without horizontal scrolling', async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 740 });
-  await page.goto('/');
-  await expect(page.locator('.bubble')).toHaveCount(8);
+  await openHome(page);
   await expect(page.getByRole('button', { name: 'Add cleaning item' })).toBeVisible();
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth - window.innerWidth,

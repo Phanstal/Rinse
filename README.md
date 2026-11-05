@@ -14,16 +14,16 @@
 
 | 平台       | 文件                            | 说明                                           |
 | ---------- | ------------------------------- | ---------------------------------------------- |
-| Android    | `Rinse-0.1.5-android-debug.apk` | 可直接安装的 debug 签名 APK                    |
-| iOS        | `Rinse-0.1.5-ios-unsigned.ipa`  | 未签名 IPA，需要使用自己的 Apple ID 重签后安装 |
-| iOS 模拟器 | `Rinse-0.1.5-ios-simulator.zip` | 需要 macOS + Xcode，解压后拖入模拟器           |
+| Android    | `Rinse-0.1.6-android-debug.apk` | 可直接安装的 debug 签名 APK                    |
+| iOS        | `Rinse-0.1.6-ios-unsigned.ipa`  | 未签名 IPA，需要使用自己的 Apple ID 重签后安装 |
+| iOS 模拟器 | `Rinse-0.1.6-ios-simulator.zip` | 需要 macOS + Xcode，解压后拖入模拟器           |
 | 校验       | `SHA256SUMS.txt`                | 所有发布文件的 SHA-256                         |
 
 ### Android 安装
 
 1. 下载 APK 到手机。
 2. 在系统设置中允许当前文件管理器或浏览器「安装未知应用」。
-3. 打开 APK 完成安装；首次启动会生成 8 个示例清洁周期。
+3. 打开 APK 完成安装；首次启动只显示一颗「Tap to create your first cleaning bubble」中央水泡，不预置示例数据。
 4. 如果系统提示「Play 保护机制」拦截，选择「仍要安装」。这是 debug 签名的正常提示，不是恶意软件。
 
 > APK 使用 Android debug key 签名，适合个人安装与验收，不适合直接提交 Google Play。正式上架需要配置 release keystore 后重新签名。
@@ -39,9 +39,11 @@
 
 ## 功能
 
-- **最新品牌图标**：v0.1.5 通过 Figma MCP 重新抓取 Make 源，确认界面代码未变，并把最新单颗 3D 玻璃水泡图标同步到 Android 桌面/启动画面、iOS AppIcon 与 PWA。
-- **玻璃首页卡片**：按 Figma Make `Version 26` 重做首页，柔和渐变背景配半透明圆角卡片，顶部是品牌标识、设置与历史入口，底部是悬浮的水泡 / 列表双视图切换。
-- **水泡视图**：8 个空间以高低错落的水泡展示；最急的水泡位于中心并更大、更深，其余水泡按紧急度向外扩散。
+- **首次进入引导**：v0.1.6 按最新 Figma 设计补齐首屏状态。新安装只显示一颗中央创建水泡与提示「Tap to create your first cleaning bubble」，没有示例项目，也没有 Bubbles / List 切换和底部加号。
+- **首颗水泡**：创建第一个项目后，中央创建水泡消失，新项目成为主水泡；Bubbles / List 切换和底部加号随后出现，可继续添加更多空间。
+- **旧示例自动清理**：从 v0.1.5 升级时，未被编辑、未清洁过的旧默认示例会自动移除；自定义项目、改过的示例和已有清洁历史都会保留。
+- **玻璃首页卡片**：按 Figma 设计稿对齐首页，柔和渐变背景配半透明圆角卡片，顶部是品牌标识、设置与历史入口，标题为 `Your home, at a glance.`，底部是触控提示与双视图切换。
+- **水泡视图**：项目以高低错落的水泡展示；最急的水泡位于中心并更大、更深，其余水泡按紧急度向外扩散。
 - **列表视图**：完整的可滚动清单，显示周期、状态与剩余天数；双视图共享同一份排序与状态颜色。
 - **按住清洁**：按住水泡约 0.4 秒即可完成一次清洁，伴随轻微触感、气泡音效和回弹动画。
 - **点按查看**：轻点水泡打开详情，可查看下次周期、上次清洁时间与重复频率。
@@ -53,6 +55,7 @@
 - **原生手感**：Android 返回键会按「编辑面板 → 备份面板 → 详情 → 历史 / 设置 → 退出」的顺序逐层返回；适配系统安全区、状态栏与底部手势条。
 - **日期自动刷新**：跨过本地午夜或应用回到前台时，剩余天数、紧急状态和排序会立即重新计算。
 
+![首次进入](docs/screenshots/web-first-run.png)
 ![水泡视图](docs/screenshots/web-home.png)
 ![列表视图](docs/screenshots/web-list.png)
 ![设置页](docs/screenshots/web-settings.png)
@@ -63,18 +66,19 @@
 
 Android 原生运行（本机 API 33 模拟器，1080 × 2400）：
 
+![Android 原生首次进入](docs/screenshots/native-android-first-run.png)
 ![Android 原生首页](docs/screenshots/native-android-home.png)
 ![Android 原生列表视图](docs/screenshots/native-android-list.png)
 ![Android 原生设置页](docs/screenshots/native-android-settings.png)
 ![Android 原生清洁历史](docs/screenshots/native-android-history.png)
 ![Android 原生备份面板](docs/screenshots/native-android-backup.png)
 
-Android 桌面图标与 Android 12 启动画面（v0.1.5 最新品牌资产）：
+Android 桌面图标与 Android 12 启动画面（v0.1.6 品牌资产）：
 
 ![Android 桌面图标](docs/screenshots/android-launcher-icon.png)
 ![Android 启动画面](docs/screenshots/android-splash.png)
 
-iOS 模拟器运行（GitHub Actions macOS 15，iPhone 16 Pro 模拟器）：
+iOS 模拟器运行（GitHub Actions macOS 14，iPhone 16 Pro 模拟器）：
 
 ![iOS 模拟器首页](docs/screenshots/ios-simulator-home.png)
 

@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import type { CleaningItem } from '../../domain/types';
 import { cycleColor, remainingCopy, scatterPosition, statusFor } from '../../domain/rinse';
+import { Icon } from '../../components/Icon';
 import { useCleanPress } from './useCleanPress';
 
 type BubbleStyle = CSSProperties & {
@@ -15,19 +16,52 @@ interface BubbleFieldProps {
   now: Date;
   onOpen: (itemId: string) => void;
   onClean: (itemId: string) => void;
+  onCreate: () => void;
+  showCreate: boolean;
 }
 
-export function BubbleField({ items, now, onOpen, onClean }: BubbleFieldProps) {
+export function BubbleField({
+  items,
+  now,
+  onOpen,
+  onClean,
+  onCreate,
+  showCreate,
+}: BubbleFieldProps) {
   const { pressingId, poppingId, startClean, endPress, handleClick } = useCleanPress(
     onOpen,
     onClean,
   );
+  const offset = showCreate ? 1 : 0;
 
   return (
     <div className="bubble-field" aria-label="Cleaning cycles">
       <div className="bubble-grid">
+        {showCreate && (
+          <button
+            type="button"
+            className="button bubble bubble-position-0 bubble-dark create-bubble"
+            style={
+              {
+                '--bubble-color': cycleColor(0, 1),
+                '--delay': '0ms',
+                '--x': '50%',
+                '--y': '50%',
+              } as BubbleStyle
+            }
+            onClick={onCreate}
+            aria-label="Create a cleaning bubble"
+          >
+            <Icon name="plus" />
+            <span>
+              Tap to create <br />
+              your first <br />
+              cleaning bubble
+            </span>
+          </button>
+        )}
         {items.map((item, index) => {
-          const position = scatterPosition(index);
+          const position = scatterPosition(index + offset);
           const style: BubbleStyle = {
             '--bubble-color': cycleColor(index, items.length),
             '--delay': `${index * 35}ms`,
@@ -38,7 +72,7 @@ export function BubbleField({ items, now, onOpen, onClean }: BubbleFieldProps) {
           const classes = [
             'button',
             'bubble',
-            `bubble-position-${index}`,
+            `bubble-position-${index + offset}`,
             index === 0 ? 'bubble-dark' : 'bubble-light',
             pressingId === item.id ? 'is-cleaning' : '',
             poppingId === item.id ? 'is-popping' : '',

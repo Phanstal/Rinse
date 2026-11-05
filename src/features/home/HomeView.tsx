@@ -41,6 +41,7 @@ export function HomeView({
 }: HomeViewProps) {
   const ranked = sortItems(items, now);
   const bubbles = visibleItems(items, now);
+  const hasItems = items.length > 0;
 
   return (
     <>
@@ -67,85 +68,81 @@ export function HomeView({
             <Icon name="history" />
           </button>
         </div>
+        <h1 className="home-tagline">Your home, at a glance.</h1>
       </header>
 
-      {items.length === 0 ? (
-        <section className="empty-state">
-          <div className="empty-bubbles">
-            <i />
-            <i />
+      <section className="home-card" aria-label="Your cleaning cycles">
+        {hasItems && (
+          <div className="card-view-switch" role="tablist" aria-label="Home view">
+            {VIEWS.map((view) => (
+              <button
+                key={view.mode}
+                type="button"
+                className={`button ${mode === view.mode ? 'active' : ''}`}
+                role="tab"
+                aria-selected={mode === view.mode}
+                aria-label={view.ariaLabel}
+                onClick={() => onModeChange(view.mode)}
+              >
+                {view.label}
+              </button>
+            ))}
           </div>
-          <h2>Start with one small thing.</h2>
-          <p>Add a space or item you want to keep clean.</p>
-          <button type="button" className="button primary-button" onClick={onAdd}>
-            Add your first item
-          </button>
-        </section>
-      ) : (
-        <>
-          <section className="home-card" aria-label="Your cleaning cycles">
-            <div className="card-view-switch" role="tablist" aria-label="Home view">
-              {VIEWS.map((view) => (
+        )}
+
+        {(mode === 'bubbles' || !hasItems) && (
+          <BubbleField
+            items={bubbles}
+            now={now}
+            onOpen={onOpenItem}
+            onClean={onCleanItem}
+            onCreate={onAdd}
+            showCreate={!hasItems}
+          />
+        )}
+
+        {hasItems && mode === 'list' && (
+          <div className="home-list" aria-label="All cleaning items">
+            <div className="history-list all-items-list">
+              {ranked.map((item, index) => (
                 <button
-                  key={view.mode}
+                  key={item.id}
                   type="button"
-                  className={`button ${mode === view.mode ? 'active' : ''}`}
-                  role="tab"
-                  aria-selected={mode === view.mode}
-                  aria-label={view.ariaLabel}
-                  onClick={() => onModeChange(view.mode)}
+                  className="history-row history-item-button"
+                  aria-label={`${item.name}, ${statusFor(item, now)}`}
+                  onClick={() => onOpenItem(item.id)}
                 >
-                  {view.label}
+                  <div
+                    className="history-cycle-dot"
+                    style={
+                      {
+                        '--bubble-color': cycleColor(index, ranked.length),
+                      } as CSSProperties
+                    }
+                  />
+                  <div className="history-copy">
+                    <strong>{item.name}</strong>
+                    <span>Every {intervalCopy(item.interval)}</span>
+                  </div>
+                  <span className="list-days">{remainingCopy(item, now)}</span>
                 </button>
               ))}
             </div>
+          </div>
+        )}
 
-            {mode === 'bubbles' && (
-              <BubbleField items={bubbles} now={now} onOpen={onOpenItem} onClean={onCleanItem} />
-            )}
+        <p className="hold-hint">Press and hold a bubble when it’s clean</p>
+      </section>
 
-            {mode === 'list' && (
-              <div className="home-list" aria-label="All cleaning items">
-                <div className="history-list all-items-list">
-                  {ranked.map((item, index) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      className="history-row history-item-button"
-                      aria-label={`${item.name}, ${statusFor(item, now)}`}
-                      onClick={() => onOpenItem(item.id)}
-                    >
-                      <div
-                        className="history-cycle-dot"
-                        style={
-                          {
-                            '--bubble-color': cycleColor(index, ranked.length),
-                          } as CSSProperties
-                        }
-                      />
-                      <div className="history-copy">
-                        <strong>{item.name}</strong>
-                        <span>Every {intervalCopy(item.interval)}</span>
-                      </div>
-                      <span className="list-days">{remainingCopy(item, now)}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <p className="hold-hint">Press and hold a bubble when it’s clean</p>
-          </section>
-
-          <button
-            type="button"
-            className="button add-button"
-            aria-label="Add cleaning item"
-            onClick={onAdd}
-          >
-            <Icon name="plus" />
-          </button>
-        </>
+      {hasItems && (
+        <button
+          type="button"
+          className="button add-button"
+          aria-label="Add cleaning item"
+          onClick={onAdd}
+        >
+          <Icon name="plus" />
+        </button>
       )}
     </>
   );

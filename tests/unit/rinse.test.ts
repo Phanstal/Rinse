@@ -2,12 +2,14 @@ import { describe, expect, it } from 'vitest';
 import {
   addItem,
   cleanItem,
+  createInitialData,
   createSampleItems,
   cycleColor,
   dateAtMidnight,
   dueCopy,
   elapsedDays,
   formatDate,
+  pruneLegacySamples,
   remainingCopy,
   removeItem,
   sortItems,
@@ -34,7 +36,7 @@ describe('date and cycle copy', () => {
     expect(formatDate('2026-10-22')).toBe('Oct 22');
   });
 
-  it('seeds the same eight spaces as the reference', () => {
+  it('keeps the legacy sample fixture available for migration tests', () => {
     const items = sample();
     expect(items.map((item) => item.name)).toEqual([
       'Kitchen counter',
@@ -112,6 +114,45 @@ describe('date and cycle copy', () => {
 function kitchenWithInterval(interval: number) {
   return { id: 'k', name: 'Kitchen', interval, lastCleaned: '2026-10-22' };
 }
+
+describe('first-run and legacy cleanup', () => {
+  it('starts a new library empty', () => {
+    expect(createInitialData()).toEqual({ items: [], history: [] });
+  });
+
+  it('removes untouched legacy sample cycles', () => {
+    const pruned = pruneLegacySamples({ items: sample(), history: [] });
+    expect(pruned.items).toEqual([]);
+    expect(pruned.history).toEqual([]);
+  });
+
+  it('keeps custom cycles while cleaning legacy samples', () => {
+    const custom = {
+      id: 'study-desk',
+      name: 'Study desk',
+      interval: 7,
+      lastCleaned: '2026-10-20',
+    };
+    const pruned = pruneLegacySamples({ items: [...sample(), custom], history: [] });
+    expect(pruned.items).toEqual([custom]);
+  });
+
+  it('keeps a legacy cycle the person cleaned, with its history', () => {
+    const cleaned = cleanItem({ items: sample(), history: [] }, 'kitchen', now).data;
+    const pruned = pruneLegacySamples(cleaned);
+    expect(pruned.items.map((item) => item.id)).toEqual(['kitchen']);
+    expect(pruned.items[0].cleanedAt).toBe(now.getTime());
+    expect(pruned.history).toHaveLength(1);
+  });
+
+  it('does not rewrite data when there is nothing to clean', () => {
+    const current: RinseData = {
+      items: [{ id: 'desk', name: 'Desk', interval: 7, lastCleaned: '2026-10-22' }],
+      history: [],
+    };
+    expect(pruneLegacySamples(current)).toBe(current);
+  });
+});
 
 describe('editing and cleaning', () => {
   it('validates drafts before saving', () => {

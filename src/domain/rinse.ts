@@ -62,21 +62,69 @@ export function daysAgoKey(days: number, now: Date = new Date()): string {
   return toDateKey(value);
 }
 
-export function createSampleItems(now: Date = new Date()): CleaningItem[] {
-  return [
-    { id: 'kitchen', name: 'Kitchen counter', interval: 3, lastCleaned: daysAgoKey(5, now) },
-    { id: 'bathroom', name: 'Bathroom', interval: 7, lastCleaned: daysAgoKey(8, now) },
-    { id: 'floors', name: 'Floors', interval: 7, lastCleaned: daysAgoKey(6, now) },
-    { id: 'bedsheets', name: 'Bedsheets', interval: 14, lastCleaned: daysAgoKey(10, now) },
-    { id: 'shower', name: 'Shower', interval: 7, lastCleaned: daysAgoKey(3, now) },
-    { id: 'mirrors', name: 'Mirrors', interval: 7, lastCleaned: daysAgoKey(2, now) },
-    { id: 'towels', name: 'Towels', interval: 7, lastCleaned: daysAgoKey(1, now) },
-    { id: 'fridge', name: 'Fridge', interval: 30, lastCleaned: daysAgoKey(1, now) },
-  ];
+export interface LegacySampleDefinition {
+  id: string;
+  name: string;
+  interval: number;
 }
 
-export function createInitialData(now: Date = new Date()): RinseData {
-  return { items: createSampleItems(now), history: [] };
+// These are the sample cycles shipped by earlier Rinse versions. They are
+// kept here so installs created before the empty first-run flow can clean
+// themselves up without touching anything the person actually created.
+export const LEGACY_SAMPLE_ITEMS: LegacySampleDefinition[] = [
+  { id: 'kitchen', name: 'Kitchen counter', interval: 3 },
+  { id: 'bathroom', name: 'Bathroom', interval: 7 },
+  { id: 'floors', name: 'Floors', interval: 7 },
+  { id: 'bedsheets', name: 'Bedsheets', interval: 14 },
+  { id: 'shower', name: 'Shower', interval: 7 },
+  { id: 'mirrors', name: 'Mirrors', interval: 7 },
+  { id: 'towels', name: 'Towels', interval: 7 },
+  { id: 'fridge', name: 'Fridge', interval: 30 },
+];
+
+const LEGACY_SAMPLE_BY_ID = new Map(LEGACY_SAMPLE_ITEMS.map((sample) => [sample.id, sample]));
+
+const LEGACY_SAMPLE_DAYS_AGO: Record<string, number> = {
+  kitchen: 5,
+  bathroom: 8,
+  floors: 6,
+  bedsheets: 10,
+  shower: 3,
+  mirrors: 2,
+  towels: 1,
+  fridge: 1,
+};
+
+export function createSampleItems(now: Date = new Date()): CleaningItem[] {
+  return LEGACY_SAMPLE_ITEMS.map((sample) => ({
+    ...sample,
+    lastCleaned: daysAgoKey(LEGACY_SAMPLE_DAYS_AGO[sample.id] ?? 0, now),
+  }));
+}
+
+export function createInitialData(): RinseData {
+  return { items: [], history: [] };
+}
+
+export function pruneLegacySamples(data: RinseData): RinseData {
+  if (data.items.length === 0) return data;
+  const historyItemIds = new Set(data.history.map((entry) => entry.itemId));
+  const items = data.items.filter((item) => {
+    const sample = LEGACY_SAMPLE_BY_ID.get(item.id);
+    if (!sample) return true;
+    const untouched =
+      item.name === sample.name &&
+      item.interval === sample.interval &&
+      item.cleanedAt === undefined &&
+      !historyItemIds.has(item.id);
+    return !untouched;
+  });
+  if (items.length === data.items.length) return data;
+  const keptIds = new Set(items.map((item) => item.id));
+  return {
+    items,
+    history: data.history.filter((entry) => keptIds.has(entry.itemId)),
+  };
 }
 
 export function elapsedDays(item: CleaningItem, now: Date = new Date()): number {

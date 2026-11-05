@@ -2,7 +2,7 @@
 
 ## 验收范围
 
-本清单覆盖 Android、iOS 和 Web 三个运行面。v0.1.5 在本地 API 33 模拟器完成品牌资产与核心流程验收；iOS 模拟器由 GitHub Actions 的 macOS 15 runner 构建，本地没有 macOS，因此 iOS 真机安装仍需在 Mac 上补充验证。
+本清单覆盖 Android、iOS 和 Web 三个运行面。v0.1.6 在本地 API 33 模拟器完成首次进入、首颗水泡、旧示例清理与核心流程验收；iOS 模拟器由 GitHub Actions 的 macOS runner 构建，本地没有 macOS，因此 iOS 真机安装仍需在 Mac 上补充验证。
 
 验收目标不是只看「能打开」，而是同时确认：
 
@@ -16,10 +16,10 @@
 | 项目     | 本地验收                                       | 发布验证                                                               |
 | -------- | ---------------------------------------------- | ---------------------------------------------------------------------- |
 | Android  | Android 13 / API 33 x86_64 模拟器，1080 × 2400 | GitHub Actions Ubuntu + JDK 17 + Android SDK                           |
-| iOS      | 未在本地运行（Windows 无 Xcode）               | GitHub Actions macOS 15：模拟器构建与启动；设备未签名包由 release 构建 |
+| iOS      | 未在本地运行（Windows 无 Xcode）               | GitHub Actions macOS 14：模拟器构建与启动；设备未签名包由 release 构建 |
 | Web      | Edge / Chromium，390 × 844 和 360 × 740        | GitHub Actions Chromium 移动端 E2E                                     |
-| 应用版本 | 0.1.5（versionCode 6 / build 6）               | 同左                                                                   |
-| 日期     | 2026-11-02                                     | 以 release workflow 实际运行日期为准                                   |
+| 应用版本 | 0.1.6（versionCode 7 / build 7）               | 同左                                                                   |
+| 日期     | 2026-11-05                                     | 以 release workflow 实际运行日期为准                                   |
 
 ## Android 验收步骤
 
@@ -29,17 +29,20 @@
 
 - 桌面图标应为浅蓝圆角底 + 单颗 3D 玻璃水泡，不再是旧的三水泡插画；圆形图标与自适应图标也应是同一图案。
 - 冷启动画面应为浅色底、居中新图标与 `rinse` 字标；横屏、深色模式启动图同样不应回退到旧图标。
-- 设置 → 应用信息中确认 versionName 为 `0.1.5`，versionCode 为 `6`。
+- 设置 → 应用信息中确认 versionName 为 `0.1.6`，versionCode 为 `7`。
 - 以上截图见 `docs/screenshots/android-launcher-icon.png` 与 `docs/screenshots/android-splash.png`。
 
 ### A1 冷启动与首页
 
 - 清除应用数据后启动，应出现浅色启动画面与 Rinse 水泡图标。
 - 顶部为 `rinse` 品牌图标与字标；右侧是 Settings（齿轮）和 Cleaning history（时钟）两个圆形按钮。
-- 品牌头部下方是一张半透明圆角玻璃卡片；卡片内部是水泡区域、触控提示和 Bubbles / List 双视图分段切换。
-- 8 个水泡全部可见：Kitchen counter、Bathroom、Floors、Bedsheets、Shower、Mirrors、Towels、Fridge。
-- Kitchen counter 水泡位于视觉中心、尺寸最大且为深蓝色，显示「2d overdue」；其余水泡按紧急度向外错落分布并依次变浅。
-- 卡片下方有渐变圆形 `+` 按钮；页面底部不压系统手势条。
+- 品牌头部下方为主标题 `Your home, at a glance.`，再下方是一张半透明圆角玻璃卡片。
+- 首次进入卡片内**只有一颗深蓝色中央水泡**，中间是白色 `+`，文字分三行显示 `Tap to create` / `your first` / `cleaning bubble`；辅助技术可读名称为「Create a cleaning bubble」。
+- 首次进入**没有** Bubbles / List 切换、没有底部 `+` 按钮，也没有 Kitchen counter 等示例项目；卡片底部只有 `Press and hold a bubble when it’s clean` 提示。
+- 点中央水泡，编辑面板打开；填写名称 `Kitchen counter`、间隔 `3 days`、上次清洁为今天往前 5 天并保存。
+- 保存后中央创建水泡消失，Kitchen counter 成为唯一的主水泡，显示 `2d overdue`；此时 Bubbles / List 切换与底部 `+` 按钮出现。
+- 再点底部 `+` 连续添加第二个项目，确认主水泡仍是第一个项目、新项目进入外圈，切换与 `+` 仍在。
+- 退出并重新打开应用，项目与主水泡顺序保持；删除全部项目后回到首次进入的中央创建水泡状态。
 
 ### A2 详情面板
 
@@ -96,8 +99,8 @@
 ### A9 删除与空状态
 
 - 删除一个项目，首页水泡数量减少；历史里已产生的记录不会被删除。
-- 删除全部项目后显示「Start with one small thing.」与 Add your first item。
-- 点 Add your first item 可以新增第一个项目。
+- 删除全部项目后回到首次进入状态：中央只有 `Tap to create your first cleaning bubble` 水泡，没有切换与底部 `+`。
+- 点中央水泡可以重新新增第一个项目，保存后切换与 `+` 恢复。
 
 ### A10 三视图与窄屏
 
@@ -120,13 +123,21 @@
 - 等系统跨过午夜，或把应用切到后台再回到前台。
 - 对应周期的剩余天数与紧急状态应在不重启应用的情况下更新。
 
+### A13 旧版示例数据迁移
+
+- 先安装 v0.1.5（versionCode 6），首次启动生成 8 条默认示例，然后不要编辑或清洁它们。
+- 直接覆盖安装 v0.1.6，打开应用。
+- 8 条未触碰的旧示例应自动消失，首页回到中央创建水泡；`shared_prefs/CapacitorStorage.xml` 中 `rinse.items.v1` 与 `rinse.history.v1` 均为空数组。
+- 再准备一份 v0.1.5 数据：保留至少一条自定义项目，并把 Kitchen counter 清洁一次产生历史；升级到 v0.1.6 后，自定义项目与 Kitchen counter 的历史应保留，其余未触碰示例被清理。
+- 迁移只发生一次；之后重新打开应用不应再次改写当前数据。
+
 ## iOS 验收步骤
 
 本地没有 Mac，以下需要在 macOS 或真机上完成。
 
 ### I1 模拟器运行
 
-- 下载 `Rinse-0.1.5-ios-simulator.zip`，解压得到 `App.app`。
+- 下载 `Rinse-0.1.6-ios-simulator.zip`，解压得到 `App.app`。
 - 打开 Xcode Simulator，把 `App.app` 拖入模拟器；或从源码运行：
 
 ```bash
@@ -146,7 +157,7 @@ open App.xcworkspace
 - 在 Xcode 打开 `ios/App/App.xcworkspace`。
 - 选择 App target → Signing & Capabilities，选择自己的 Team，修改唯一 Bundle Identifier。
 - 连接 iPhone，选择设备 Run。
-- 或者用 Sideloadly / AltStore 重签 `Rinse-0.1.5-ios-unsigned.ipa`。
+- 或者用 Sideloadly / AltStore 重签 `Rinse-0.1.6-ios-unsigned.ipa`。
 - 检查启动图、状态栏、安全区、触感反馈与本地持久化。
 - 杀进程后重新打开，数据仍在。
 
@@ -161,7 +172,7 @@ open App.xcworkspace
 - `npm run build && npm run preview`，打开 `http://127.0.0.1:4784`。
 - 检查桌面宽度下是否居中显示手机画布；移动端浏览器全屏显示。
 - 浏览器刷新后数据仍在 localStorage。
-- 清除站点数据后回到示例数据。
+- 清除站点数据后回到首次进入的中央创建水泡，而不是示例数据。
 - 设置 → Backup & restore 打开备份面板，复制/下载 JSON；再粘贴恢复，刷新后恢复的数据仍在。
 - 在本地午夜前后停留，双视图中的到期天数与排序会自动跨日更新。
 
@@ -169,8 +180,8 @@ open App.xcworkspace
 
 | 检查        | 命令                      | 结果                                                                                                                            |
 | ----------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| 单元测试    | `npm test`                | 22 passed                                                                                                                       |
-| 移动端 E2E  | `npm run test:e2e`        | 15 passed                                                                                                                       |
+| 单元测试    | `npm test`                | 27 passed                                                                                                                       |
+| 移动端 E2E  | `npm run test:e2e`        | 16 passed                                                                                                                       |
 | 类型        | `npm run typecheck`       | passed                                                                                                                          |
 | Lint        | `npm run lint`            | passed                                                                                                                          |
 | 格式        | `npm run format:check`    | passed                                                                                                                          |
