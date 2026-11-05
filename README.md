@@ -73,12 +73,12 @@ Android 原生运行（本机 API 33 模拟器，1080 × 2400）：
 ![Android 原生清洁历史](docs/screenshots/native-android-history.png)
 ![Android 原生备份面板](docs/screenshots/native-android-backup.png)
 
-Android 桌面图标与 Android 12 启动画面（v0.1.6 品牌资产）：
+Android 桌面图标与 Android 12 启动画面（品牌资产自 v0.1.5 起沿用）：
 
 ![Android 桌面图标](docs/screenshots/android-launcher-icon.png)
 ![Android 启动画面](docs/screenshots/android-splash.png)
 
-iOS 模拟器运行（GitHub Actions macOS 14，iPhone 16 Pro 模拟器）：
+iOS 模拟器首次进入（v0.1.6，GitHub Actions macOS 14，iPhone 16 Pro 模拟器）：
 
 ![iOS 模拟器首页](docs/screenshots/ios-simulator-home.png)
 
