@@ -11,6 +11,7 @@ import {
   formatDate,
   pruneLegacySamples,
   remainingCopy,
+  remainingDays,
   removeItem,
   sortItems,
   statusFor,
@@ -90,12 +91,36 @@ describe('date and cycle copy', () => {
     expect(dueCopy(twoDaysOverdue, new Date(2026, 9, 27, 23, 59))).toBe('2 days overdue');
   });
 
-  it('sorts by urgency and then by the oldest cleaning time', () => {
+  it('sorts by literal remaining days and then by the oldest cleaning time', () => {
     const items = sample();
     const sorted = sortItems(items, now);
     expect(sorted[0].name).toBe('Kitchen counter');
     expect(sorted[1].name).toBe('Bathroom');
     expect(sorted[2].name).toBe('Floors');
+    expect(sorted.map((item) => remainingDays(item, now))).toEqual([-2, -1, 1, 4, 4, 5, 6, 29]);
+
+    // A long cycle with five days left used to outrank a short cycle with one
+    // day left because urgency was measured as a percentage of the interval.
+    const dateBefore = (days: number) => toDateKey(new Date(2026, 9, 27 - days));
+    const longCycle = {
+      id: 'long',
+      name: 'Long cycle',
+      interval: 100,
+      lastCleaned: dateBefore(95),
+    };
+    const shortCycle = {
+      id: 'short',
+      name: 'Short cycle',
+      interval: 10,
+      lastCleaned: dateBefore(9),
+    };
+    expect(remainingDays(longCycle, now)).toBe(5);
+    expect(remainingDays(shortCycle, now)).toBe(1);
+    expect(sortItems([longCycle, shortCycle], now).map((item) => item.id)).toEqual([
+      'short',
+      'long',
+    ]);
+
     const tied = [
       { id: 'newer', name: 'Newer', interval: 7, lastCleaned: '2026-10-20', cleanedAt: 20 },
       { id: 'older', name: 'Older', interval: 7, lastCleaned: '2026-10-20', cleanedAt: 10 },

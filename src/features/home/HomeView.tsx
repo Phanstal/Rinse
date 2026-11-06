@@ -131,7 +131,7 @@ export function HomeView({
           </div>
         )}
 
-        <p className="hold-hint">Press and hold a bubble when it’s clean</p>
+        {mode === 'bubbles' && <p className="hold-hint">Press and hold a bubble when it’s clean</p>}
       </section>
 
       {hasItems && (

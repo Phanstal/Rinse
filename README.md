@@ -14,9 +14,9 @@
 
 | 平台       | 文件                            | 说明                                           |
 | ---------- | ------------------------------- | ---------------------------------------------- |
-| Android    | `Rinse-0.1.6-android-debug.apk` | 可直接安装的 debug 签名 APK                    |
-| iOS        | `Rinse-0.1.6-ios-unsigned.ipa`  | 未签名 IPA，需要使用自己的 Apple ID 重签后安装 |
-| iOS 模拟器 | `Rinse-0.1.6-ios-simulator.zip` | 需要 macOS + Xcode，解压后拖入模拟器           |
+| Android    | `Rinse-0.1.7-android-debug.apk` | 可直接安装的 debug 签名 APK                    |
+| iOS        | `Rinse-0.1.7-ios-unsigned.ipa`  | 未签名 IPA，需要使用自己的 Apple ID 重签后安装 |
+| iOS 模拟器 | `Rinse-0.1.7-ios-simulator.zip` | 需要 macOS + Xcode，解压后拖入模拟器           |
 | 校验       | `SHA256SUMS.txt`                | 所有发布文件的 SHA-256                         |
 
 ### Android 安装
@@ -39,12 +39,14 @@
 
 ## 功能
 
-- **首次进入引导**：v0.1.6 按最新 Figma 设计补齐首屏状态。新安装只显示一颗中央创建水泡与提示「Tap to create your first cleaning bubble」，没有示例项目，也没有 Bubbles / List 切换和底部加号。
+- **首次进入引导**：v0.1.7 按最新 Figma 设计补齐首屏状态。新安装只显示一颗中央创建水泡与提示「Tap to create your first cleaning bubble」，没有示例项目，也没有 Bubbles / List 切换和底部加号。
 - **首颗水泡**：创建第一个项目后，中央创建水泡消失，新项目成为主水泡；Bubbles / List 切换和底部加号随后出现，可继续添加更多空间。
 - **旧示例自动清理**：从 v0.1.5 升级时，未被编辑、未清洁过的旧默认示例会自动移除；自定义项目、改过的示例和已有清洁历史都会保留。
-- **玻璃首页卡片**：按 Figma 设计稿对齐首页，柔和渐变背景配半透明圆角卡片，顶部是品牌标识、设置与历史入口，标题为 `Your home, at a glance.`，底部是触控提示与双视图切换。
-- **水泡视图**：项目以高低错落的水泡展示；最急的水泡位于中心并更大、更深，其余水泡按紧急度向外扩散。
-- **列表视图**：完整的可滚动清单，显示周期、状态与剩余天数；双视图共享同一份排序与状态颜色。
+- **玻璃首页卡片**：按 Figma 设计稿对齐首页，柔和渐变背景配半透明圆角卡片，顶部是品牌标识、设置与历史入口，标题为 `Your home, at a glance.`；长按提示位于卡片顶部，底部是双视图切换。
+- **水泡视图**：项目以高低错落的水泡展示；严格按剩余天数排序，逾期最多的水泡位于中心并更大、更深，剩余天数更多的水泡逐渐变浅；剩余天数相同时按最近清洁时间保持稳定顺序。
+- **列表视图**：完整的可滚动清单，显示周期、状态与剩余天数；双视图共享同一份剩余天数排序与颜色层级。
+- **提示呼吸**：顶部 `Press and hold a bubble when it’s clean` 提示以 3.2 秒周期轻微呼吸，透明度平滑变化；系统开启 Reduce Motion 时停止动画并保持清晰的静态提示。
+- **输入不缩放**：编辑与备份表单输入框统一为 16px，并设置 `-webkit-text-size-adjust: 100%`，避免 iOS Safari 在聚焦输入框或键盘收起时放大页面。
 - **按住清洁**：按住水泡约 0.4 秒即可完成一次清洁，伴随轻微触感、气泡音效和回弹动画。
 - **点按查看**：轻点水泡打开详情，可查看下次周期、上次清洁时间与重复频率。
 - **新增 / 编辑**：支持名称、1–365 天周期、上次清洁日期；新增时默认从今天开始。
@@ -78,7 +80,7 @@ Android 桌面图标与 Android 12 启动画面（品牌资产自 v0.1.5 起沿�
 ![Android 桌面图标](docs/screenshots/android-launcher-icon.png)
 ![Android 启动画面](docs/screenshots/android-splash.png)
 
-iOS 模拟器首次进入（v0.1.6，GitHub Actions macOS 14，iPhone 16 Pro 模拟器）：
+iOS 模拟器首次进入（v0.1.7，GitHub Actions macOS 14，iPhone 16 Pro 模拟器）：
 
 ![iOS 模拟器首页](docs/screenshots/ios-simulator-home.png)
 
@@ -166,8 +168,8 @@ open App.xcworkspace
 
 ## 测试
 
-- `tests/unit`：域名逻辑、日期边界、排序、编辑、清洁/撤销、Preferences 仓库序列化与容错。
-- `tests/e2e`：首页、双视图切换、设置页、详情、新增、编辑、按住清洁、历史撤销、删除、备份、刷新持久化、空状态、360 px 窄屏。
+- `tests/unit`：域名逻辑、日期边界、按剩余天数排序与同天数稳定顺序、编辑、清洁/撤销、Preferences 仓库序列化与容错。
+- `tests/e2e`：首页、顶部呼吸提示与 Reduce Motion、16px 输入框与页面缩放保护、双视图切换、设置页、详情、新增、编辑、按住清洁、历史撤销、删除、备份、刷新持久化、空状态、360 px 窄屏。
 - CI 同时验证 Web 检查、Android debug APK 构建、iOS 模拟器构建。
 
 ## 目录
@@ -191,7 +193,7 @@ docs/                 发布说明、验收清单、截图
 
 ## 设计来源
 
-界面依据 [Figma Make 原型（Version 26）](https://www.figma.com/make/zpog9lRPWVomLBPYMTKvOp/Rinse-Cleaning-Cycle-Tracker) 复刻，保持了玻璃卡片、水泡布局、双视图切换、品牌头部、设置与历史页、配色、文案层级、详情/编辑/历史面板与 400ms 长按节奏。日期计算使用设备本地日历日，避免跨时区时出现偏移。
+界面布局依据 [Figma 设计稿](https://www.figma.com/design/7q0bEgPhRQg1B4k9LHF5xy/Untitled) 对齐，交互与排序依据 [Figma Make 原型](https://www.figma.com/make/zpog9lRPWVomLBPYMTKvOp/Rinse-Cleaning-Cycle-Tracker) 复刻，保持了玻璃卡片、水泡布局、双视图切换、品牌头部、设置与历史页、配色、文案层级、详情/编辑/历史面板与 400ms 长按节奏。日期计算使用设备本地日历日，避免跨时区时出现偏移。
 
 更多文档：[改版报告](REPORT.md) · [真机验收清单](docs/ACCEPTANCE.md) · [发布说明](docs/RELEASE_NOTES.md)
 

@@ -1,79 +1,74 @@
-# Rinse v0.1.6 改版报告
+# Rinse v0.1.7 改版报告
 
 ## 1. 结论
 
-本轮按「**design 看布局，Make 看交互**」完成首次进入体验：
+本轮继续按「**design 看布局，Make 看交互**」修正首页细节与移动端输入体验：
 
-- 从 Figma 设计文件读取首屏布局：品牌头部、`Your home, at a glance.` 标题、玻璃卡片、中央创建水泡与底部触控提示；设计中没有 Bubbles / List 切换、底部加号或示例项目。
-- 从最新 [Figma Make 原型](https://www.figma.com/make/zpog9lRPWVomLBPYMTKvOp/Rinse-Cleaning-Cycle-Tracker) 读取交互源码，确认首屏使用 `Tap to create your first cleaning bubble`，创建第一颗水泡后切换与底部加号才出现。
-- 同时按需求清理 v0.1.5 及更早版本写入的默认示例数据；迁移只删除**未被用户触碰过**的示例，避免误删自定义项目或清洁历史。
+- 从 [Figma 设计稿](https://www.figma.com/design/7q0bEgPhRQg1B4k9LHF5xy/Untitled) 确认长按提示位于玻璃卡片顶部，而不是底部。
+- 从最新 [Figma Make 原型](https://www.figma.com/make/zpog9lRPWVomLBPYMTKvOp/Rinse-Cleaning-Cycle-Tracker) 读取交互源码，确认排序改为字面剩余天数、提示加入 3.2 秒呼吸、表单字号提升到 16px。
+- 同时处理 iOS Safari 输入聚焦自动放大与键盘收起后比例异常：所有表单控件不低于 16px，并在根元素声明 `-webkit-text-size-adjust: 100%`。
+- 水泡颜色仍由排序位置决定：排在最前的逾期项目最深，越往后越浅；剩余天数相同时由最近清洁时间维持稳定顺序。
 
-v0.1.5 的界面基线是 Make Version 26。本轮最新 Make 只改了两个文件：
+## 2. 设计与交互对齐
 
-| 文件            | 最新 SHA-256                                                       | 相对 v26  |
-| --------------- | ------------------------------------------------------------------ | --------- |
-| `src/App.tsx`   | `B9CC83575A291CEA759E2EB40CA56F7462808B5D2BDEE26F402DC08096505008` | +38 / −13 |
-| `src/index.css` | `C70F27B86B2DADEA081CEAA077A6D8B216CBF824563387FF315D926884561669` | +15 / −1  |
+### 2.1 设计稿布局
 
-增量集中在首次进入状态与创建水泡，其余界面沿用 v0.1.5。设计稿的布局已同步到 Web、Android 与 iOS 共用的 CSS，而不是只改某一个运行面。
+- 长按提示 `Press and hold a bubble when it’s clean` 位于卡片顶部，居中、蓝灰色、加粗。
+- 水泡区域从提示下方开始，中央创建水泡/主水泡保持原有尺寸与位置。
+- 底部仍是 Bubbles / List 双视图切换；有项目时才有切换与底部加号。
 
-## 2. 设计布局与 Make 交互
-
-### 2.1 设计稿首屏
-
-- 顶部：`rinse` 品牌图标与字标，右侧 Settings / Cleaning history 两个圆形按钮。
-- 标题：`Your home, at a glance.`，位于头部下方。
-- 主卡片：半透明圆角玻璃卡片，顶部约在 126px（考虑安全区）。
-- 中央：一颗深蓝色创建水泡，白色 `+` 与三行文案 `Tap to create` / `your first` / `cleaning bubble`。
-- 底部：`Press and hold a bubble when it’s clean` 提示。
-- 首屏没有分段切换、没有底部 `+`、没有默认示例项目。
+实现上将 `.hold-hint` 从 `bottom: 62px` 改为 `top: 18px`，并把水泡区域 `inset` 顶部从 14px 增加到 48px，确保提示与第一行水泡不重叠。列表视图不再显示长按提示，因为该手势只作用于水泡。
 
 ### 2.2 Make 交互
 
-最新 Make `src/App.tsx` 引入 `HAS_CREATED_KEY = 'rinse-has-created-v1'`，并用一个持久化标记决定是否展示创建水泡；示例数组改为空。其关键逻辑：
+最新 Make 的关键变化：
 
-```ts
-const showCreateBubble = !hasCreatedBubble && items.length === 0;
-```
-
-本项目没有照搬 `hasCreated` 标记，而是直接用 `items.length === 0` 判断。原因是：如果只依赖一次性标记，用户删除最后一个项目后会得到一个没有创建入口的死屏；以项目数量为准可以让「删空 → 重新创建第一颗」自然闭环。两种实现的首屏与创建后表现一致。
+| 变化          | Make 行为                                               | 本项目实现                                          |
+| ------------- | ------------------------------------------------------- | --------------------------------------------------- |
+| 排序          | `remainingDays(a) - remainingDays(b)`，再按 `cleanedAt` | `sortItems` 改为相同比较逻辑                        |
+| 颜色          | 继续用排序下标映射七档色板                              | 保持 `cycleColor(index, total)`                     |
+| 提示位置      | 卡片顶部                                                | `.home-card .hold-hint { top: 18px }`               |
+| 提示动画      | 3.2s 循环透明度变化                                     | `hint-breathe` 3.2s，0.8–1.0                        |
+| 表单字号      | 16px                                                    | 编辑三个输入框 + 备份 textarea 均为 16px            |
+| 页面缩放保护  | `-webkit-text-size-adjust: 100%`                        | 根元素同时设置标准与 `-webkit-` 版本                |
+| Reduce Motion | 缩短所有动画                                            | 呼吸动画完全停止，保持 0.9 静态透明度，其余动画缩短 |
 
 ## 3. 本版改动
 
-### 3.1 领域与持久化
+### 3.1 排序与颜色
 
 - `src/domain/rinse.ts`
-  - 新增 `LegacySampleDefinition`、`LEGACY_SAMPLE_ITEMS`、`LEGACY_SAMPLE_BY_ID`、`LEGACY_SAMPLE_DAYS_AGO`，完整保留 v0.1.5 八个示例的 id、名称、间隔与相对日期。
-  - `createSampleItems(now)` 保留为迁移测试与旧数据构造工具。
-  - `createInitialData()` 改为 `{ items: [], history: [] }`。
-  - 新增 `pruneLegacySamples(data)`：仅移除 id、名称、间隔都与旧示例一致，且没有 `cleanedAt`、没有历史记录的条目；自定义项目、改过名称/间隔的示例、清洁过的示例与其历史全部保留。
-- `src/features/useRinse.ts`
-  - 首次启动加载空库。
-  - 已有数据先经过 `pruneLegacySamples`；仅在条目实际减少时写回，避免每次启动重复写存储。
-
-### 3.2 首页与视觉
-
-- `src/features/home/HomeView.tsx`
-  - 新增 `Your home, at a glance.` 标题。
-  - 移除旧的「Start with one small thing.」空状态。
-  - 有项目时才渲染 Bubbles / List 切换与底部加号；空库时始终渲染创建水泡。
-- `src/features/home/BubbleField.tsx`
-  - 新增 `onCreate` / `showCreate`。
-  - 空库时中央渲染 `button.bubble.bubble-position-0.create-bubble`，包含 `+` 与精确文案，`aria-label="Create a cleaning bubble"`。
-  - 创建水泡使用 `--x: 50%` / `--y: 50%`，其他项目的位置与颜色索引向后偏移一位。
-  - 文案使用显式三行换行，保证 360 × 740、430 × 852 与 Android 1080 × 2400 下都与设计稿一致。
+  - 新增 `remainingDays(item, now)`，统一「剩余天数」口径，`remainingCopy` 复用它。
+  - `sortItems` 从 `urgency`（清洁进度比例）改为剩余天数升序。
+  - 剩余天数相同时继续按 `cleanedAt` 升序；没有清洁时间时保持原数组顺序（现代 JS 稳定排序）。
+- `src/features/home/HomeView.tsx`、`BubbleField.tsx`
+  - 列表与气泡都消费同一份 `sortItems` / `visibleItems`。
+  - 颜色继续按排序下标映射：第 0 颗最深，最后一颗最浅。因此「剩余天数最少的最深、最多的最浅」由排序保证，逾期项目优先占据中心与深色。
 - `src/styles/base.css`
-  - 新增 `.home-tagline`、`.create-bubble` 及卡片顶部/提示位置调整，匹配设计稿。
-  - 创建水泡在窄屏缩小内边距，避免 `cleaning bubble` 被拆成两行。
+  - 提示移到顶部并提升对比度（`#54758a`，11px/600）。
+  - 新增 `hint-breathe` 关键帧：0% / 100% 透明度 0.8，50% 为 1，周期 3.2 秒，`ease-in-out`。
+  - Reduce Motion 下 `animation: none; opacity: 0.9`，避免无限动画被压成 0.01ms 后产生异常闪烁。
+
+### 3.2 移动端输入与页面比例
+
+- `src/styles/base.css`
+  - `html` 增加 `-webkit-text-size-adjust: 100%` 与 `text-size-adjust: 100%`。
+  - `.editor input, .editor select` 字号从 14px 提升到 16px。
+- `src/styles/app.css`
+  - `.restore-panel textarea` 从 11px 提升到 16px；备份 JSON 文本框同样会触发 iOS 聚焦缩放，不能遗漏。
+- 不通过 `maximum-scale=1` 禁用缩放：保留用户双指缩放能力，只消除 Safari 因控件字号不足产生的自动放大。
 
 ### 3.3 测试
 
-- `tests/unit/rinse.test.ts`：新增空库初始化、旧示例清理、自定义项目保留、清洁过的示例与历史保留、无需迁移时对象不重写等 5 项测试。
-- `tests/e2e/rinse.spec.ts`：
-  - 新增首次进入 → 创建第一颗 → 切换/加号出现 → 刷新持久化 → 删除全部回到创建水泡的完整路径。
-  - 新增旧示例与自定义项目混合时的自动清理断言。
-  - 原有 8 个示例的 E2E 场景改为显式注入相对日期数据，避免依赖安装时间。
-  - 360 × 740 窄屏与跨午夜测试保留。
+- `tests/unit/rinse.test.ts`
+  - 排序用例改为按剩余天数断言，覆盖 `[-2, -1, 1, 4, 4, 5, 6, 29]`。
+  - 新增「100 天周期剩 5 天」与「10 天周期剩 1 天」的对比：旧比例排序会把前者排前，新逻辑必须把后者排前。
+  - 保留同剩余天数按 `cleanedAt` 稳定排序的用例。
+- `tests/e2e/rinse.spec.ts`
+  - 新增顶部提示位置/字号/字重/3.2s 动画断言，并确认提示在首颗水泡上方、列表视图消失。
+  - 新增 Reduce Motion 下 `animationName: none`、`opacity: 0.9` 断言。
+  - 新增编辑面板三个输入框均为 16px、备份 textarea 为 16px、根元素 `-webkit-text-size-adjust: 100%` 断言。
+  - 原有 16 项 E2E 全部保留。
 
 ## 4. 验证
 
@@ -85,66 +80,48 @@ const showCreateBubble = !hasCreatedBubble && items.length === 0;
 | 格式      | `npm run format:check` | passed    |
 | 类型      | `npm run typecheck`    | passed    |
 | 单元测试  | `npm test`             | 27 passed |
-| 移动 E2E  | `npm run test:e2e`     | 16 passed |
+| 移动 E2E  | `npm run test:e2e`     | 18 passed |
 | Web build | `npm run build`        | passed    |
 
 ### 4.2 Android 实机/模拟器
 
 环境：Android 13 / API 33 x86_64 模拟器，1080 × 2400，`habitica_test_api33`。
 
-- 卸载旧 debug 签名包，安装 v0.1.6 debug APK；`dumpsys` 确认 `versionCode=7`、`versionName=0.1.6`。
-- 清除应用数据后启动：只有中央创建水泡；DOM 断言 `bubbles=1`、`tabs=0`、底部加号不存在、创建按钮存在。
-- 点中央水泡，填写 `Kitchen counter`、间隔 7 天并保存：创建按钮消失，`tabs=2`，底部加号出现，新项目成为 `.bubble-position-0`。
-- 点底部加号添加 `Bathroom`：水泡数 `2`，中心仍是 `Kitchen counter`，切换与加号保持。
-- 切到 List：两行项目均可读；强制停止并重新启动应用，项目与顺序仍在。
-- 通过 Capacitor Preferences 注入 v0.1.5 的 8 条旧示例后重载：首页自动回到中央创建水泡，原生 `rinse.items.v1` 被写回 `[]`，证明迁移在 Android 原生存储上生效。
-- 截图：`docs/screenshots/native-android-first-run.png`、`native-android-home.png`、`native-android-list.png`。
+- 安装 v0.1.7 debug APK；`dumpsys` 确认 `versionCode=8`、`versionName=0.1.7`。
+- 清除数据后首次进入：顶部提示、中央创建水泡、无切换/加号。
+- 创建 8 个相对日期项目后：水泡与列表均按 `2d overdue → 1d overdue → 1 day left → 4 → 4 → 5 → 6 → 29 days left` 排列。
+- 编辑面板弹出软键盘后通过 WebView DevTools 读取：`visualViewport.scale = 1`、`visualViewport.width = innerWidth = 412`、`scrollWidth = 412`、`inputFont = 16px`、`-webkit-text-size-adjust = 100%`，未发生页面放大或横向溢出。
+- 截图：`docs/screenshots/native-android-first-run.png`、`native-android-home.png`、`native-android-list.png`、`native-android-editor.png`、`native-android-settings.png`、`native-android-backup.png`、`native-android-history.png`。
 
 ### 4.3 Web
 
-- 430 × 852 首次进入：中央创建水泡、主标题、提示均与设计稿一致；无切换、无加号、无示例。
-- 创建第一颗后：主水泡切换为该项目，切换/加号出现；刷新后状态保持。
-- 旧示例迁移：注入 8 条旧示例，加载后仅中央创建水泡，localStorage 中 items 变空；混合自定义项目时仅保留自定义项。
-- 360 × 740：无横向滚动，创建水泡三行文案不溢出。
-- 截图：`docs/screenshots/web-first-run.png`、`web-home.png`。
+- 430 × 932 首屏：顶部提示、中央创建水泡与设计稿一致。
+- 8 个项目：气泡与列表顺序一致，中心为 `2d overdue` 的 Kitchen counter，最外圈为 `29 days left` 的 Fridge。
+- 编辑/备份：所有输入框计算字号 16px；根元素 `-webkit-text-size-adjust: 100%`。
+- 360 × 740：无横向滚动；E2E 18 项通过。
+- 截图：`docs/screenshots/web-first-run.png`、`web-home.png`、`web-list.png`、`web-editor.png`。
 
 ### 4.4 iOS
 
 - 本地为 Windows，无法运行 Xcode Simulator。
-- iOS 构建由 GitHub Actions macOS runner 完成；`ios/App` 版本已同步为 `0.1.6 (7)`，AppIcon / Splash 资源未变。
-- 首次进入与迁移逻辑全部位于共享 Web 资源，iOS 与 Android/Web 使用同一实现；真机安装仍需在 Mac 上补充签名验证。
-- CI run [41972560838](https://github.com/Phanstal/Rinse/actions/runs/41972560838) 在 iPhone 16 Pro 模拟器安装并启动 v0.1.6，上传 `Rinse-ios-home.png`；该截图已更新为 `docs/screenshots/ios-simulator-home.png`，显示与 Web/Android 相同的中央创建水泡首屏。
+- iOS 构建由 GitHub Actions macOS runner 完成；`ios/App` 版本已同步为 `0.1.7 (8)`。
+- 输入缩放保护使用标准 CSS，与 Web/Android 共享同一份资源；CI 在 iPhone 16 Pro 模拟器安装、启动并截图。
+- 真机安装仍需在 Mac 上使用自己的签名完成。
 
 ## 5. 版本
 
-- 应用版本：`0.1.6`
-- Android：`versionCode 7` / `versionName 0.1.6`
-- iOS：`CURRENT_PROJECT_VERSION 7` / `MARKETING_VERSION 0.1.6`
-- npm：`package.json` 与 `package-lock.json` 均为 `0.1.6`
+- 应用版本：`0.1.7`
+- Android：`versionCode 8` / `versionName 0.1.7`
+- iOS：`CURRENT_PROJECT_VERSION 8` / `MARKETING_VERSION 0.1.7`
+- npm：`package.json` 与 `package-lock.json` 均为 `0.1.7`
 
 ## 6. 发布产物
 
-- GitHub Release：[v0.1.6](https://github.com/Phanstal/Rinse/releases/tag/v0.1.6)
-- Release workflow：[run 41970656551](https://github.com/Phanstal/Rinse/actions/runs/41970656551)，Android / iOS / Publish 三个 job 全部成功。
-- CI：[run 41970458461](https://github.com/Phanstal/Rinse/actions/runs/41970458461)，Web、Android、iOS 三个 job 全部成功。
-- 已从 Release 下载全部产物并逐项计算 SHA-256，与 `SHA256SUMS.txt` 完全一致。
-
-| 文件                            | 大小（字节） | SHA-256                                                            |
-| ------------------------------- | ------------ | ------------------------------------------------------------------ |
-| `Rinse-0.1.6-android-debug.apk` | 6,783,991    | `676118f0ae8b8f8d632ebdbce79a645a01aff6c664837429754aec91af55a4e4` |
-| `Rinse-0.1.6-ios-unsigned.ipa`  | 4,631,358    | `d92062b963ff31ed7aabed618cc304bed44e9b43e8eab8ea675ba5eab4d8752c` |
-| `Rinse-0.1.6-ios-simulator.zip` | 5,164,791    | `14c7cdd2f9c9e633e47ac46a63e61707d5539f0716df96c76844b0674c0b153b` |
-
-产物校验：
-
-- APK：`aapt` 确认 `com.phanstal.rinse`、versionCode `7`、versionName `0.1.6`；`apksigner` 确认为 Android Debug 证书。
-- IPA：解包 `Payload/App.app/App` 为 arm64，Info.plist 为 `0.1.6 (7)`、Bundle ID `com.phanstal.rinse`、MinimumOSVersion `13.0`；未签名，需重签。
-- 模拟器 zip：`App.app` 的 Info.plist 同为 `0.1.6 (7)`，可执行文件同时包含 x86_64 与 arm64。
+发布完成后补充 Release 链接、workflow run、三个产物的字节数与 SHA-256。
 
 ## 7. 已知限制
 
-- 迁移只识别旧版内置的 8 个示例；用户自行改名或改间隔的示例会被视为自定义数据保留。
-- 被清洁过的旧示例会保留，以避免删除历史；如果用户希望完全清空，可在设置中「删除全部数据」。
+- 排序使用设备本地日历日；跨时区旅行时，剩余天数会按新时区重新计算。
 - 水泡视图只有 9 个有机位置；超过 9 个项目会复用位置，列表仍可完整查看。
 - Android APK 仍是 debug 签名，不适合直接上架 Google Play；iOS 仍只提供未签名 IPA 与模拟器包。
 
@@ -153,5 +130,5 @@ const showCreateBubble = !hasCreatedBubble && items.length === 0;
 - [README](README.md)
 - [真机验收清单](docs/ACCEPTANCE.md)
 - [发布说明](docs/RELEASE_NOTES.md)
-- [v0.1.5 报告](https://github.com/Phanstal/Rinse/blob/v0.1.5/REPORT.md)
-- [GitHub Release v0.1.6](https://github.com/Phanstal/Rinse/releases/tag/v0.1.6)
+- [v0.1.6 报告](https://github.com/Phanstal/Rinse/blob/v0.1.6/REPORT.md)
+- [GitHub Release v0.1.7](https://github.com/Phanstal/Rinse/releases/tag/v0.1.7)

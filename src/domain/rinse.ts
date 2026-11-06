@@ -165,8 +165,12 @@ export function dueCopy(item: CleaningItem, now: Date = new Date()): string {
   return `Due in ${days} days`;
 }
 
+export function remainingDays(item: CleaningItem, now: Date = new Date()): number {
+  return item.interval - elapsedDays(item, now);
+}
+
 export function remainingCopy(item: CleaningItem, now: Date = new Date()): string {
-  const remaining = item.interval - elapsedDays(item, now);
+  const remaining = remainingDays(item, now);
   if (remaining < 0) return `${Math.abs(remaining)}d overdue`;
   if (remaining === 0) return 'Due today';
   return `${remaining} day${remaining === 1 ? '' : 's'} left`;
@@ -176,9 +180,13 @@ export function intervalCopy(days: number): string {
   return `${days} ${days === 1 ? 'day' : 'days'}`;
 }
 
+// Order by the literal time left, not by cycle percentage: a long cycle with
+// one day left is more urgent than a short cycle that is merely close to due.
+// Equal remaining days keep the oldest cleaning first so refreshes stay stable.
 export function sortItems(items: CleaningItem[], now: Date = new Date()): CleaningItem[] {
   return [...items].sort(
-    (a, b) => urgency(b, now) - urgency(a, now) || (a.cleanedAt ?? 0) - (b.cleanedAt ?? 0),
+    (a, b) =>
+      remainingDays(a, now) - remainingDays(b, now) || (a.cleanedAt ?? 0) - (b.cleanedAt ?? 0),
   );
 }
 

@@ -4,6 +4,10 @@ body,
 #root {
   min-height: 100%;
 }
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
 button:focus-visible,
 input:focus-visible,
 select:focus-visible,
@@ -562,7 +566,8 @@ h1 {
   padding: 0 15px;
   color: #344147;
   background: #f7f9f9;
-  font-size: 14px;
+  /* iOS Safari zooms the page when a focused field is below 16px. */
+  font-size: 16px;
 }
 .editor input:focus,
 .editor select:focus {
@@ -1067,7 +1072,7 @@ h1 {
 }
 .home-card .bubble-field {
   position: absolute;
-  inset: 14px 0 98px;
+  inset: 48px 0 98px;
   padding: 0 5px;
 }
 .home-card .bubble-grid {
@@ -1119,9 +1124,24 @@ h1 {
 }
 .home-card .hold-hint {
   position: absolute;
+  top: 18px;
   right: 0;
-  bottom: 62px;
   left: 0;
+  z-index: 3;
+  color: #54758a;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  animation: hint-breathe 3.2s ease-in-out infinite;
+}
+@keyframes hint-breathe {
+  0%,
+  100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 .home-card .home-list {
   position: absolute;
@@ -1256,5 +1276,9 @@ h1 {
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+  .home-card .hold-hint {
+    animation: none;
+    opacity: 0.9;
   }
 }

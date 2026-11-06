@@ -58,6 +58,13 @@ test('shows the seeded home with bubbles and controls', async ({ page }) => {
   await expect(page.locator('.wordmark')).toHaveText('rinse');
   await expect(page.locator('.bubble')).toHaveCount(8);
   await expect(page.getByText('Press and hold a bubble when it’s clean')).toBeVisible();
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        getComputedStyle(document.documentElement).getPropertyValue('-webkit-text-size-adjust'),
+      ),
+    )
+    .toBe('100%');
   await expect(page.getByRole('tab', { name: 'Bubble view' })).toHaveAttribute(
     'aria-selected',
     'true',
@@ -87,6 +94,49 @@ test('switches between the bubble and full list views', async ({ page }) => {
   await expect(page.locator('.bubble')).toHaveCount(8);
 });
 
+test('places the breathing hold hint at the top of the bubble field', async ({ page }) => {
+  await openHome(page);
+  const hint = page.locator('.hold-hint');
+  const style = await hint.evaluate((element) => {
+    const computed = getComputedStyle(element);
+    return {
+      position: computed.position,
+      top: computed.top,
+      fontSize: computed.fontSize,
+      fontWeight: Number(computed.fontWeight),
+      animationName: computed.animationName,
+      animationDuration: computed.animationDuration,
+    };
+  });
+  expect(style).toEqual({
+    position: 'absolute',
+    top: '18px',
+    fontSize: '11px',
+    fontWeight: 600,
+    animationName: 'hint-breathe',
+    animationDuration: '3.2s',
+  });
+
+  const hintBox = await hint.boundingBox();
+  const bubbleBox = await page.locator('.bubble-position-0').boundingBox();
+  expect(hintBox).not.toBeNull();
+  expect(bubbleBox).not.toBeNull();
+  expect(hintBox!.y).toBeLessThan(bubbleBox!.y);
+
+  await page.getByRole('tab', { name: 'List view' }).click();
+  await expect(hint).toHaveCount(0);
+});
+
+test('weakens the hold hint when reduced motion is requested', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await openHome(page);
+  const style = await page.locator('.hold-hint').evaluate((element) => {
+    const computed = getComputedStyle(element);
+    return { animationName: computed.animationName, opacity: computed.opacity };
+  });
+  expect(style).toEqual({ animationName: 'none', opacity: '0.9' });
+});
+
 test('opens a bubble detail and closes it', async ({ page }) => {
   await openHome(page);
   await page.getByRole('button', { name: 'Kitchen counter, Overdue' }).click();
@@ -105,6 +155,11 @@ test('adds a new cleaning cycle', async ({ page }) => {
   await page.getByRole('button', { name: 'Add cleaning item' }).click();
   const dialog = page.getByRole('dialog');
   await expect(dialog.getByText('New cycle', { exact: true })).toBeVisible();
+  expect(
+    await dialog
+      .locator('input, select')
+      .evaluateAll((fields) => fields.map((field) => getComputedStyle(field).fontSize)),
+  ).toEqual(['16px', '16px', '16px']);
   await dialog.getByPlaceholder('e.g. Kitchen counter').fill('Study desk');
   await dialog.getByRole('button', { name: '7 days' }).click();
   await dialog.getByRole('button', { name: 'Save item' }).click();
@@ -275,6 +330,10 @@ test('exports a summary and restores a pasted backup', async ({ page }) => {
   await expect(dataDialog.getByText('Download .json')).toBeVisible();
 
   await dataDialog.getByRole('button', { name: 'Restore from a backup' }).click();
+  await expect(dataDialog.getByPlaceholder('Paste the contents of a Rinse backup here')).toHaveCSS(
+    'font-size',
+    '16px',
+  );
   await dataDialog.getByPlaceholder('Paste the contents of a Rinse backup here').fill(
     JSON.stringify({
       items: [{ id: 'desk', name: 'Desk', interval: 7, lastCleaned: '2020-01-01' }],
