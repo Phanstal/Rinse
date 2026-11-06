@@ -16,7 +16,7 @@
 | 项目     | 本地验收                                       | 发布验证                                                               |
 | -------- | ---------------------------------------------- | ---------------------------------------------------------------------- |
 | Android  | Android 13 / API 33 x86_64 模拟器，1080 × 2400 | GitHub Actions Ubuntu + JDK 17 + Android SDK                           |
-| iOS      | 未在本地运行（Windows 无 Xcode）               | GitHub Actions macOS 14：模拟器构建与启动；设备未签名包由 release 构建 |
+| iOS      | 未在本地运行（Windows 无 Xcode）               | GitHub Actions macOS 15：模拟器构建与启动；设备未签名包由 release 构建 |
 | Web      | Edge / Chromium，390 × 844 和 360 × 740        | GitHub Actions Chromium 移动端 E2E                                     |
 | 应用版本 | 0.1.7（versionCode 8 / build 8）               | 同左                                                                   |
 | 日期     | 2026-11-06                                     | 以 release workflow 实际运行日期为准                                   |
@@ -183,16 +183,16 @@ open App.xcworkspace
 
 ## 自动化证据
 
-| 检查        | 命令                      | 结果                                                                              |
-| ----------- | ------------------------- | --------------------------------------------------------------------------------- |
-| 单元测试    | `npm test`                | 27 passed                                                                         |
-| 移动端 E2E  | `npm run test:e2e`        | 18 passed                                                                         |
-| 类型        | `npm run typecheck`       | passed                                                                            |
-| Lint        | `npm run lint`            | passed                                                                            |
-| 格式        | `npm run format:check`    | passed                                                                            |
-| Android APK | `./gradlew assembleDebug` | BUILD SUCCESSFUL                                                                  |
-| iOS 模拟器  | GitHub Actions macOS 14   | 构建、安装、启动与截图 passed（本轮 CI run 发布后补充）                           |
-| CI 全流程   | GitHub Actions            | lint / 格式 / 类型 / 单元 / E2E / APK / iOS 全部 passed（本轮 CI run 发布后补充） |
+| 检查        | 命令                      | 结果                                                                                                                                        |
+| ----------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| 单元测试    | `npm test`                | 27 passed                                                                                                                                   |
+| 移动端 E2E  | `npm run test:e2e`        | 18 passed                                                                                                                                   |
+| 类型        | `npm run typecheck`       | passed                                                                                                                                      |
+| Lint        | `npm run lint`            | passed                                                                                                                                      |
+| 格式        | `npm run format:check`    | passed                                                                                                                                      |
+| Android APK | `./gradlew assembleDebug` | BUILD SUCCESSFUL                                                                                                                            |
+| iOS 模拟器  | GitHub Actions macOS 15   | 构建、安装、启动与截图 passed（[CI run 42162492788](https://github.com/Phanstal/Rinse/actions/runs/42162492788)）                           |
+| CI 全流程   | GitHub Actions            | lint / 格式 / 类型 / 单元 / E2E / APK / iOS 全部 passed（[CI run 42163584403](https://github.com/Phanstal/Rinse/actions/runs/42163584403)） |
 
 ## 发布产物验收
 
@@ -204,6 +204,21 @@ open App.xcworkspace
 - [ ] 真机验收记录补充到本文件。
 
 ## 发布记录
+
+### v0.1.7
+
+- Release：[v0.1.7](https://github.com/Phanstal/Rinse/releases/tag/v0.1.7)
+- Release workflow：[run 42164562139](https://github.com/Phanstal/Rinse/actions/runs/42164562139)，Android / iOS / Publish 全部成功。
+- 发布校验：从 Release 下载 APK、IPA、模拟器 zip 与 `SHA256SUMS.txt`，三个产物 SHA-256 均与清单一致。
+- APK：`Rinse-0.1.7-android-debug.apk`，6,784,084 字节，SHA-256 `eb94e52702e89ae99c86211cd33660c64ccd2a4c863b83332aff5e0bf819e826`；`aapt` 确认包名 `com.phanstal.rinse`、versionCode `8`、versionName `0.1.7`，`apksigner` 确认为 Android Debug 证书；在 API 33 模拟器卸载本地 debug 包后全新安装 Release APK，启动显示顶部提示与中央创建水泡。
+- iOS IPA：`Rinse-0.1.7-ios-unsigned.ipa`，4,637,360 字节，SHA-256 `4762fcceb04586c38821e48d676d51bb8fe4730a409067ef4ef0ce69feebcb49`；解包确认 `Payload/App.app/App`、Bundle ID `com.phanstal.rinse`、版本 `0.1.7 (8)`、arm64 单架构；未签名，需重签。
+- iOS 模拟器 zip：`Rinse-0.1.7-ios-simulator.zip`，5,165,936 字节，SHA-256 `f8b57150bf5b2550974ca44ccfb383c78d08a1dd02a607edf9537418aae4d65a`；解包确认 `App.app`、Bundle ID `com.phanstal.rinse`、版本 `0.1.7 (8)`，Simulator 可执行文件为 x86_64 + arm64 双架构；CI 已在 iPhone 模拟器完成安装、启动与截图。
+- 排序验收：Android WebView 注入 8 个相对日期项目后，水泡与列表均按 `2d overdue → 1d overdue → 1 day left → 4 → 4 → 5 → 6 → 29 days left` 排列；单测覆盖「100 天周期剩 5 天」排在「10 天周期剩 1 天」之后。
+- 提示验收：提示位于气泡区域顶部，计算样式 `top: 18px`、`font-size: 11px`、`font-weight: 600`、`animation: hint-breathe 3.2s`；Reduce Motion 下 `animation: none`、`opacity: 0.9`。
+- 输入验收：编辑三个输入框与备份 textarea 均为 16px；软键盘打开时 `visualViewport.scale = 1`、`scrollWidth = innerWidth = 412`，无页面放大或横向溢出。
+- 自动化：lint / 格式 / 类型 / 27 单元测试 / 18 移动端 E2E 全部通过（[CI run 42163584403](https://github.com/Phanstal/Rinse/actions/runs/42163584403)）。
+- iOS 截图：CI run [42162492788](https://github.com/Phanstal/Rinse/actions/runs/42162492788) 上传 `ios-artifacts/Rinse-ios-home.png`，已更新为 `docs/screenshots/ios-simulator-home.png`。
+- 视觉验收：Web、Android 与 iOS 首次进入均为顶部提示、单颗中央创建水泡、三行文案、无切换/加号/示例；创建第一颗后切换与加号出现。截图见 `docs/screenshots/web-first-run.png`、`native-android-first-run.png` 与 `ios-simulator-home.png`。
 
 ### v0.1.6
 

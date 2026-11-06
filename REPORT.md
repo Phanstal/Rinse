@@ -117,7 +117,22 @@
 
 ## 6. 发布产物
 
-发布完成后补充 Release 链接、workflow run、三个产物的字节数与 SHA-256。
+- GitHub Release：[v0.1.7](https://github.com/Phanstal/Rinse/releases/tag/v0.1.7)
+- Release workflow：[run 42164562139](https://github.com/Phanstal/Rinse/actions/runs/42164562139)，Android / iOS / Publish 三个 job 全部成功。
+- CI：[run 42163584403](https://github.com/Phanstal/Rinse/actions/runs/42163584403)，Web、Android、iOS 三个 job 全部成功；iOS 截图来自同一提交的 [run 42162492788](https://github.com/Phanstal/Rinse/actions/runs/42162492788)。
+- 已从 Release 下载全部产物并逐项计算 SHA-256，与 `SHA256SUMS.txt` 完全一致。
+
+| 文件                            | 大小（字节） | SHA-256                                                            |
+| ------------------------------- | ------------ | ------------------------------------------------------------------ |
+| `Rinse-0.1.7-android-debug.apk` | 6,784,084    | `eb94e52702e89ae99c86211cd33660c64ccd2a4c863b83332aff5e0bf819e826` |
+| `Rinse-0.1.7-ios-unsigned.ipa`  | 4,637,360    | `4762fcceb04586c38821e48d676d51bb8fe4730a409067ef4ef0ce69feebcb49` |
+| `Rinse-0.1.7-ios-simulator.zip` | 5,165,936    | `f8b57150bf5b2550974ca44ccfb383c78d08a1dd02a607edf9537418aae4d65a` |
+
+产物校验：
+
+- APK：`aapt` 确认 `com.phanstal.rinse`、versionCode `8`、versionName `0.1.7`；`apksigner` 确认为 Android Debug 证书；在 API 33 模拟器卸载本地 debug 包后全新安装 Release APK，启动显示 v0.1.7 首次进入界面。
+- IPA：解包 `Payload/App.app/App` 为 arm64，Info.plist 为 `0.1.7 (8)`、Bundle ID `com.phanstal.rinse`、MinimumOSVersion `13.0`；未签名，需重签。
+- 模拟器 zip：`App.app` 的 Info.plist 同为 `0.1.7 (8)`，可执行文件同时包含 x86_64 与 arm64。
 
 ## 7. 已知限制
 

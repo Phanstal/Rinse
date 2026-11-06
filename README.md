@@ -80,7 +80,7 @@ Android 桌面图标与 Android 12 启动画面（品牌资产自 v0.1.5 起沿�
 ![Android 桌面图标](docs/screenshots/android-launcher-icon.png)
 ![Android 启动画面](docs/screenshots/android-splash.png)
 
-iOS 模拟器首次进入（v0.1.7，GitHub Actions macOS 14，iPhone 16 Pro 模拟器）：
+iOS 模拟器首次进入（v0.1.7，GitHub Actions macOS 15，iPhone 16 Pro 模拟器）：
 
 ![iOS 模拟器首页](docs/screenshots/ios-simulator-home.png)
 
